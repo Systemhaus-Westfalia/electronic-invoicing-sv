@@ -1,0 +1,104 @@
+plugins {
+	id 'java-library'
+	id 'maven-publish'
+	id 'signing'
+}
+
+ext {
+    libraryRepo  = "https://maven.pkg.github.com/Systemhaus-Westfalia/shw-customizations"
+    patchVersion = System.getenv("ADEMPIERE_LIBRARY_VERSION") ?: "local-1.0.1"
+    baseVersion  = "3.9.4.001"
+    baseGroupId  = "io.github.adempiere"
+    publishGroupId  = "org.shw"
+}
+
+sourceCompatibility = 1.11
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+allprojects {
+    tasks.withType(Javadoc) {
+    	options.addStringOption('Xdoclint:none', '-quiet')
+   	}
+}
+
+compileJava { 
+  options.encoding = "UTF-8" 
+}
+
+javadoc {
+    options.charSet = 'UTF-8'
+}
+
+dependencies {
+   api fileTree(
+        dir: 'lib',
+        include: [
+            '*.jar'
+        ]
+    )
+    //	ADempiere Core
+    api "${baseGroupId}:base:${baseVersion}"
+}
+
+sourceSets {
+    main {
+         java {
+            srcDirs = ['src/main/java']
+         }
+    }
+}
+
+jar {
+	manifest {
+		attributes(
+			"Implementation-Title": "Localización El Salvador Facturación Electrónica (General)",
+			"Implementation-Version": patchVersion,
+			"EntityType": "LSV"
+		)
+    }
+}
+
+
+publishing {
+    repositories {
+		mavenLocal()
+        maven {
+            url = libraryRepo
+            credentials {
+                username = System.getenv("GITHUB_DEPLOY_USER") ?: System.properties['deploy.user']
+                password = System.getenv("GITHUB_DEPLOY_TOKEN") ?: System.properties['deploy.token'] 
+            }
+        }
+    }
+    
+    publications {
+        maven(MavenPublication) {
+			groupId = publishGroupId
+			artifactId = 'electronic-invoicing-sv'
+			version = patchVersion
+           	from components.java
+           	pom {
+                name = 'Localización El Salvador Facturación Electrónica (General)'
+                description = 'Localización para El salvador Facturación Electrónica (General) de Systemhaus Westfalia'
+                url = 'http://adempiere.io/'
+                licenses {
+                    license {
+                        name = 'GNU General Public License, version 2'
+                        url = 'https://www.gnu.org/licenses/old-licenses/gpl-2.0.txt'
+                    }
+                }
+                developers {
+                    developer {
+                        id = 'mariocalderon'
+                        name = 'Mario Calderon'
+                        email = 'mcalderon@westfalia-it.com'
+                    }
+                }
+            }
+		}
+	}
+}

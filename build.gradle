@@ -42,6 +42,26 @@ dependencies {
     )
     //	ADempiere Core
     api "${baseGroupId}:base:${baseVersion}"
+    // Jakarta RESTful Web Services
+	// https://mvnrepository.com/artifact/javax.ws.rs/javax.ws.rs-api
+	api 'javax.ws.rs:javax.ws.rs-api:2.1.1'
+	// Jersey core client implementation
+	// https://mvnrepository.com/artifact/  org.glassfish.jersey.core/jersey-client
+	api 'org.glassfish.jersey.core:jersey-client:2.34'
+	// https://mvnrepository.com/artifact/org.glassfish.jersey.inject/jersey-hk2
+	api 'org.glassfish.jersey.inject:jersey-hk2:2.34'
+    // JSON in Java
+	// https://mvnrepository.com/artifact/org.json/json
+	api 'org.json:json:20211205'
+    // https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
+	api 'org.apache.commons:commons-lang3:3.0'
+    api 'com.lowagie:itext:2.1.7'
+    // https://mvnrepository.com/artifact/com.itextpdf/pdfa
+	api 'com.itextpdf:pdfa:7.1.13'
+    // https://mvnrepository.com/artifact/com.itextpdf/itextpdf
+    api 'com.itextpdf:itextpdf:5.5.2'
+    api 'com.fasterxml.jackson.core:jackson-databind:2.0.1'
+	api 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.11.0'
 }
 
 sourceSets {

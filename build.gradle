@@ -2,23 +2,29 @@ plugins {
 	id 'java-library'
 	id 'maven-publish'
 	id 'signing'
+
+	id 'java'
+	// "apply false" -> damit bei "gradle build" in SpringBoot-Projekten eine jar-Datei erstellt wird. Sonst nicht.
+    id 'org.springframework.boot' version '2.4.5' apply false
+	id 'io.spring.dependency-management' version '1.1.5'
 }
 
 ext {
-    libraryRepo  = "https://maven.pkg.github.com/Systemhaus-Westfalia/shw-customizations"
+    libraryRepo  = "https://maven.pkg.github.com/Systemhaus-Westfalia/adempiere-shw"
     patchVersion = System.getenv("ADEMPIERE_LIBRARY_VERSION") ?: "local-1.0.1"
     baseVersion  = "3.9.4.001"
     baseGroupId  = "io.github.adempiere"
-    publishGroupId  = "org.shw"
+    publishGroupId  = "com.shw"
 }
 
-sourceCompatibility = 1.11
+sourceCompatibility = "1.11"
 
 repositories {
     mavenLocal()
     mavenCentral()
     maven {
-    	url = "https://maven.pkg.github.com/Systemhaus-Westfalia/shw-customizations"
+       // Aus https://github.com/Systemhaus-Westfalia/adempiere-shw/blob/main/shw_libs/build.gradle
+       url = "https://maven.pkg.github.com/Systemhaus-Westfalia/adempiere-shw"
         credentials {
         	username = System.getenv("GITHUB_DEPLOY_USER") ?: System.properties['deploy.user']
             password = System.getenv("GITHUB_DEPLOY_TOKEN") ?: System.properties['deploy.token'] 
@@ -70,7 +76,29 @@ dependencies {
     api 'com.fasterxml.jackson.core:jackson-databind:2.0.1'
 	api 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.11.0'
     //  SHW Libraries
-    api "org.shw:lsv-general:1.0.0"
+    api "com.shw:lsv-general:1.0.2"
+
+    // Dependencies from file pom.xml (electronic invoice Maven project frmm MMHH)
+    api platform('org.springframework.boot:spring-boot-dependencies:2.4.5')
+	api 'org.springframework.boot:spring-boot-starter'
+	api 'jakarta.validation:jakarta.validation-api:2.0.2'
+
+    api "com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.3"
+    api "org.springframework.boot:spring-boot-starter-web"
+    api "org.springframework.boot:spring-boot-starter"
+    api "org.springframework.boot:spring-boot-starter-test"
+    api "io.jsonwebtoken:jjwt:0.9.0"
+    api "org.json:json:20160810"
+    api "org.bouncycastle:bcprov-jdk15on:1.60"
+    api "org.glassfish.jersey.core:jersey-client:2.25.1"
+    api "org.glassfish.jersey.media:jersey-media-json-jackson:2.25.1"
+    api "org.bitbucket.b_c:jose4j:0.7.1"
+    api "com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.9.8"
+    api "au.com.dius.pact.consumer:junit:4.1.11"
+
+    // From LSV-General
+    implementation 'org.apache.commons:commons-lang3:3.13.0'   // eine Lösung ist  commons-lang3-3.14.0.jar
+    implementation 'com.itextpdf:itextpdf:5.5.9'
 
 }
 
@@ -91,7 +119,6 @@ jar {
 		)
     }
 }
-
 
 publishing {
     repositories {

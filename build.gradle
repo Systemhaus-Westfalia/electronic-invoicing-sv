@@ -99,8 +99,13 @@ dependencies {
     
     
     // From LSV-General
-    implementation 'org.apache.commons:commons-lang3:3.13.0'   // eine Lösung ist  commons-lang3-3.14.0.jar
-    implementation 'com.itextpdf:itextpdf:5.5.9'
+    // Es wird vorüberghehend die version "commons-lang3:3.0" von vorher. Das ist auch in lsv-general so.
+    // Später kann auf eine neue Version umgesattelt werden.
+    // implementation 'org.apache.commons:commons-lang3:3.13.0'   // eine Lösung ist  commons-lang3-3.14.0.jar
+
+    // Es wird vorüberghehend die version "commons-lang3:3.0" von vorher. Das ist auch in lsv-general so.
+    // Später kann auf eine neue Version umgesattelt werden.
+    //implementation 'com.itextpdf:itextpdf:5.5.9'
 
 }
 

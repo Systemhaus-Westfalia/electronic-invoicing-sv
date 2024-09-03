@@ -4,8 +4,7 @@ plugins {
 	id 'signing'
 
 	id 'java'
-	// "apply false" -> damit bei "gradle build" in SpringBoot-Projekten eine jar-Datei erstellt wird. Sonst nicht.
-    id 'org.springframework.boot' version '2.4.5' apply false
+    id 'org.springframework.boot' version '2.4.5'
 	id 'io.spring.dependency-management' version '1.1.5'
 }
 
@@ -77,12 +76,14 @@ dependencies {
 	api 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.11.0'
     //  SHW Libraries
     api "com.shw:lsv-general:1.0.2"
-
-    // Dependencies from file pom.xml (electronic invoice Maven project frmm MMHH)
+    
+    
+    // Dependencies from file pom.xml (electronic invoice program form MMHH)
+    
     api platform('org.springframework.boot:spring-boot-dependencies:2.4.5')
 	api 'org.springframework.boot:spring-boot-starter'
 	api 'jakarta.validation:jakarta.validation-api:2.0.2'
-
+	
     api "com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.3"
     api "org.springframework.boot:spring-boot-starter-web"
     api "org.springframework.boot:spring-boot-starter"
@@ -95,15 +96,11 @@ dependencies {
     api "org.bitbucket.b_c:jose4j:0.7.1"
     api "com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.9.8"
     api "au.com.dius.pact.consumer:junit:4.1.11"
-
+    
+    
     // From LSV-General
-    // Es wird vorüberghehend die version "commons-lang3:3.0" von vorher. Das ist auch in lsv-general so.
-    // Später kann auf eine neue Version umgesattelt werden.
-    // implementation 'org.apache.commons:commons-lang3:3.13.0'   // eine Lösung ist  commons-lang3-3.14.0.jar
-
-    // Es wird vorüberghehend die version "commons-lang3:3.0" von vorher. Das ist auch in lsv-general so.
-    // Später kann auf eine neue Version umgesattelt werden.
-    //implementation 'com.itextpdf:itextpdf:5.5.9'
+    implementation 'org.apache.commons:commons-lang3:3.13.0'   // eine Lösung ist  commons-lang3-3.14.0.jar
+    implementation 'com.itextpdf:itextpdf:5.5.9'
 
 }
 
@@ -124,6 +121,7 @@ jar {
 		)
     }
 }
+
 
 publishing {
     repositories {

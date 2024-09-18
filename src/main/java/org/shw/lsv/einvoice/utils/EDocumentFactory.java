@@ -5,13 +5,17 @@ package org.shw.lsv.einvoice.utils;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 
 import org.adempiere.core.domains.models.X_C_Region;
 import org.adempiere.core.domains.models.X_E_Activity;
@@ -54,7 +58,8 @@ public abstract class EDocumentFactory {
 	protected Properties contextProperties;
 	protected JSONObject jsonInputToFactory;  // Will contain data passed to factory
 	protected Language languageUsed = null;
-	
+	protected String signature;  // Signature based on result of createJsonString()
+
 	public static String sqlCuerpoDocumento 		= "SELECT * FROM	EI_Invoiceline_Cumm "
 														+ " WHERE c_invoice_id = ? ";
 	public static String sqlApendice 				= "SELECT (description) as invoiceinfo FROM shw_c_invoice_header_vt i"
@@ -71,7 +76,6 @@ public abstract class EDocumentFactory {
 	public static String CUERPODOCUMENTO_QTYINVOICED				= "qtyinvoiced";
 	public static String CUERPODOCUMENTO_LINETOTALAMT   			= "linetotalamt";
 	
-
 	public static String TAXINDICATOR_IVA 							= "IVA";
 	public static String TAXINDICATOR_NSUJ 							= "NSUJ";
 	public static String TAXINDICATOR_EXT 							= "EXT";
@@ -79,11 +83,8 @@ public abstract class EDocumentFactory {
 	public static String CHARGETYPE_CTAJ	 						= "CTAJ";
 	
 	public static String Columnname_E_Activity_ID 					= "E_Activity_ID";
-	
-	
-	
+	public static int TIMEOUT_PROCESSBUILDER 						= 10;
 
-	
 	
 	public EDocumentFactory(String trxName, Properties contextProperties, MClient client, MOrgInfo orgInfo) {
 		this.trxName = trxName;
@@ -147,6 +148,34 @@ public abstract class EDocumentFactory {
 		}
 	}
 	
+	public String readContentFromFile (String directoryPath, String fullPathFileName) {
+		String result;
+		try
+		{
+			System.out.println("EDocumentFactory: read contents of file '" + fullPathFileName + "'");
+			directoryPath = (directoryPath.endsWith("/")
+					|| directoryPath.endsWith("\\"))
+					? directoryPath:directoryPath + "/"; 
+			
+			// Path filepath = Paths.get(directoryPath);  // nicht nötig
+			//Files.createDirectories(filepath);  // nicht nötig
+			File readableFile = new File (fullPathFileName);
+			long fileLength = readableFile.length();
+			byte[] fileContent = new byte[(int) fileLength];
+			FileInputStream fis = new FileInputStream(readableFile);
+			fileContent = fis.readAllBytes();
+			result = new String(fileContent);
+			fis.close();
+		}
+		catch (Exception ex)
+		{
+			System.out.println("EDocumentFactory: EXCEPTION when reading contents of file '" + fullPathFileName + "'");
+			throw new RuntimeException(ex);
+		}
+		System.out.println("EDocumentFactory: contents of file '" + fullPathFileName + "' were successfully read");
+		return result;
+	}
+	
 
 	public JSONObject generateApendiceInputData(int invoiceID) {
 //		String sqlSelect = "SELECT (invoiceinfo) as invoiceinfo FROM shw_c_invoice_header_vt i"
@@ -180,6 +209,61 @@ public abstract class EDocumentFactory {
 		
 		jsonApendice.put(CreditoFiscal.APENDICE, jsonTributosArray);
 		return jsonApendice;
+	}
+	
+	public String generateSignature (SignatureGenerationAPI signatureAPI) {
+		System.out.println("EDocumentFactory: start generating Signature");
+
+	    String result="";
+	    
+	    // I Starte SpringBoot Prozess zur Erzeugung der Signature-Datei
+		List<String> commandList = new ArrayList<String>();
+		commandList.add("java");
+		commandList.add(signatureAPI.getSpringBootLogFileArgument());
+		commandList.add("-jar");
+		commandList.add(signatureAPI.getSpringBootPackageFullPath());
+		commandList.add(signatureAPI.getSpringBootPackageMainClass());
+		commandList.add(signatureAPI.getNit());
+		commandList.add(signatureAPI.getPasswordPri());
+		commandList.add(signatureAPI.getPasswordPub());
+		commandList.add(signatureAPI.getNombreFirma());
+		commandList.add(signatureAPI.getDteJson());
+		commandList.add(signatureAPI.getSpringBootApplicationContext());
+		commandList.add(signatureAPI.getSignatureFilePrefix());
+		
+		try {
+			ProcessBuilder pb = new ProcessBuilder(commandList);  // creating the process
+			System.out.println("EDocumentFactory: start ProcessBuilder process");
+			Process process = pb.start();  // starting the process
+			System.out.println("EDocumentFactory: ProcessBuilder process started, waiting " + TIMEOUT_PROCESSBUILDER + " " + TimeUnit.SECONDS + " to finish ");
+			boolean processFinishedOnTime = process.waitFor(TIMEOUT_PROCESSBUILDER, TimeUnit.SECONDS);  // let the process run for 10 seconds
+			if (!processFinishedOnTime) {
+				process.destroy();                             // tell the process to stop
+				if (!process.waitFor(10, TimeUnit.SECONDS)) {  // give it a chance to stop
+					process.destroyForcibly();                 // tell the OS to kill the process
+				}
+				result = "Method 'generateSignature()' calling SpringBoot application NEEDED MORE THAN " + TIMEOUT_PROCESSBUILDER + " " + TimeUnit.SECONDS + " to finish AND THUS WAS INTERRUPTED";
+				System.out.println("EDocumentFactory: error generating Signature: interrupted because SpringBoot application NEEDED MORE THAN 10 SECONDS");
+				return result;
+			}
+		} catch (IOException | InterruptedException e) {
+			System.out.println("EDocumentFactory: EXCEPTION error generating Signature");
+			result = e.toString();
+			return result;
+		}
+		
+		// II Lese Signature-Datei aus und speichere sie in Factory
+		try {
+			String eSignature = readContentFromFile (signatureAPI.getSignatureFilePath(), signatureAPI.getSignatureFullFilePath());
+			setSignature(eSignature);
+		}
+		catch (Exception e) {
+			System.out.println("EDocumentFactory: EXCEPTION error generating Signature");
+			result = e.toString();
+			return result;
+		}
+		System.out.println("EDocumentFactory: end generating Signature");
+		return result;
 	}
 	
 	public X_E_Enviroment  client_getE_Enviroment(MClient client) {
@@ -271,6 +355,13 @@ public abstract class EDocumentFactory {
 	public X_E_TimeSpan  paymentterm_getE_TimeSpan(MPaymentTerm paymentTerm) {
 		X_E_TimeSpan e_TimeSpan = new X_E_TimeSpan(Env.getCtx()	, paymentTerm.get_ValueAsInt(X_E_TimeSpan.COLUMNNAME_E_TimeSpan_ID), null);
 		return e_TimeSpan;
+	}
+	
+	public String getSignature() {
+		return signature;
+	}
+	public void setSignature(String signature) {
+		this.signature = signature;
 	}
 	
 	

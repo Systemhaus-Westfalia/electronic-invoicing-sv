@@ -30,6 +30,7 @@ import org.shw.lsv.einvoice.factory.FacturaSujetoExcluidoFactory;
 import org.shw.lsv.einvoice.factory.NotaDeCreditoFactory;
 import org.shw.lsv.einvoice.factory.RetencionFactory;
 import org.shw.lsv.einvoice.utils.EDocumentFactory;
+import org.shw.lsv.einvoice.utils.SignatureGenerationAPI;
 import org.shw.lsv.util.support.IDeclarationDocument;
 
 /**
@@ -101,25 +102,36 @@ public class ElectronicInvoice implements IDeclarationDocument {
     	}	
 
 		System.out.println("Start documentFactory.createJsonString() for invoice " + invoice.getDocumentNo() );
-    	String creditoFiscalAsJsonString = documentFactory.createJsonString();
+    	String eInvoiceAsJsonString = documentFactory.createJsonString();
 		System.out.println("End documentFactory.createJsonString() for invoice " + invoice.getDocumentNo() );
-    	String ei_codigoGeneracion = documentFactory.getCodigoGeneracion(creditoFiscalAsJsonString);
+		
+		System.out.println("Start documentFactory.generateSignature() for invoice " + invoice.getDocumentNo() );
+		SignatureGenerationAPI signatureAPI = new SignatureGenerationAPI(client, invoice.getDocumentNo(), eInvoiceAsJsonString);
+    	String result = documentFactory.generateSignature(signatureAPI);
+
+		if (result!="") {  // ProcessBuilder muss Status==leere Zeichenkette zurück liefern
+			System.out.println("documentFactory.generateSignature() for invoice " + invoice.getDocumentNo() + "EXITED WITH ERROR");
+			System.out.println(result);
+		}
+		System.out.println("End documentFactory.generateSignature() for invoice " + invoice.getDocumentNo() );
+		
+    	String ei_codigoGeneracion = documentFactory.getCodigoGeneracion(eInvoiceAsJsonString);
     	String ei_numeroControl = "";
 
 		System.out.println("Start " + invoice.getDocumentNo() + " Update ei values" );
     	if (!isreversal) {
-    		ei_numeroControl = documentFactory.getNumeroControl(creditoFiscalAsJsonString);
+    		ei_numeroControl = documentFactory.getNumeroControl(eInvoiceAsJsonString);
     		invoice.set_ValueOfColumn("ei_numeroControl", ei_numeroControl); 
     	}
     	
-    	invoice.set_ValueOfColumn("ei_numeroControl", ei_numeroControl); 
+    	invoice.set_ValueOfColumn("ei_numeroControl", ei_numeroControl);
     	invoice.set_ValueOfColumn("ei_codigoGeneracion", ei_codigoGeneracion);
-    	invoice.set_ValueOfColumn("ei_numeroControl", ei_numeroControl);      
     	
     	invoice.set_ValueOfColumn("ei_ValidationStatus",  "01");
     	invoice.saveEx();
-		System.out.println("End " + invoice.getDocumentNo() + " Update ei values" );
-       	electronicInvoiceModel.setjson(creditoFiscalAsJsonString);
+		System.out.println("End of " + invoice.getDocumentNo() + " Update ei values" );
+       	electronicInvoiceModel.setjson(eInvoiceAsJsonString);
+    	electronicInvoiceModel.set_ValueOfColumn("ei_signature", documentFactory.getSignature());  // TODO: Feld Signature hinzufügen: WO??
 		System.out.println("Start electronicInvoiceModel " + invoice.getDocumentNo() + " Update ei values" );
     	electronicInvoiceModel.saveEx();
     	System.out.println("Documento electrónico generado para: " + invoice.getDocumentNo() + ". Estado: " + electronicInvoiceModel.getei_ValidationStatus());

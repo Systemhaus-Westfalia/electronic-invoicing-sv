@@ -12,11 +12,19 @@ import org.compiere.model.MClient;
  * 
  */
 public class SignatureGenerationAPI {
-	static final String SPRINGBOOT_PACKAGE_PATH     	   = "/home/westfalia/downloads/Adempiere/Adempiere_400/Historie/20230820_Elektronische_Fakturierung/20240429_Programme-MMH/02-Repositories-geliefert_vom_MMHH/svfe-api-firmador/target/";
+	// Folgende Zeile ist zur Verwendung beim Testen auf dem Laptop.
+	//static final String SPRINGBOOT_PACKAGE_PATH     	   = "/home/westfalia/downloads/Adempiere/Adempiere_400/Historie/20230820_Elektronische_Fakturierung/20240429_Programme-MMH/02-Repositories-geliefert_vom_MMHH/svfe-api-firmador/target/";
+	// Folgende Zeile muss beim Testen auskommentiert werden. Sie enthált das Verzeichnis des SpringBoot-Packages im ZK-Container. 
+	static final String SPRINGBOOT_PACKAGE_PATH     	   = "/home/adempiere/persistent_files/SHW_electronic_invoicing/springboot_package/";
+
 	static final String SPRINGBOOT_PACKAGE_NAME     	   = "svfe-api-firmador-0.1.1.jar";
 	static final String SPRINGBOOT_PACKAGE_MAIN_CLASS     	= "sv.mh.fe.SHWElectronicSignature";
+
+	// Folgende Zeile ist zur Verwendung beim Testen auf dem Laptop.
+	//static final String SPRINGBOOT_APPLICATION_CONTEXT_PATH = "/home/westfalia/downloads/Adempiere/Adempiere_400/Historie/20240809-Elektronische-Fakturierung/Z_Temp/";
+	// Folgende Zeile muss beim Testen auskommentiert werden. Sie enthált das Verzeichnis des SpringBoot-Packages im ZK-Container.
+	static final String SPRINGBOOT_APPLICATION_CONTEXT_PATH = "/home/adempiere/persistent_files/SHW_electronic_invoicing/logs/";
 	
-	static final String SPRINGBOOT_APPLICATION_CONTEXT_PATH = "/home/westfalia/downloads/Adempiere/Adempiere_400/Historie/20240809-Elektronische-Fakturierung/Z_Temp/";
 	static final String SPRINGBOOT_APPLICATION_LOGFILE_NAME = "ZZZ_Spring_2.log";
 	static final String SPRINGBOOT_APPLICATION_ARGUMENT    	= "-Dlogging.file=";
 	

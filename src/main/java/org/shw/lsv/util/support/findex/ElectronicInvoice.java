@@ -131,7 +131,7 @@ public class ElectronicInvoice implements IDeclarationDocument {
     	invoice.saveEx();
 		System.out.println("End of " + invoice.getDocumentNo() + " Update ei values" );
        	electronicInvoiceModel.setjson(eInvoiceAsJsonString);
-    	electronicInvoiceModel.set_ValueOfColumn("ei_signature", documentFactory.getSignature());  // TODO: Feld Signature hinzufügen: WO??
+    	electronicInvoiceModel.set_ValueOfColumn("ei_Signature", documentFactory.getSignature());
 		System.out.println("Start electronicInvoiceModel " + invoice.getDocumentNo() + " Update ei values" );
     	electronicInvoiceModel.saveEx();
     	System.out.println("Documento electrónico generado para: " + invoice.getDocumentNo() + ". Estado: " + electronicInvoiceModel.getei_ValidationStatus());

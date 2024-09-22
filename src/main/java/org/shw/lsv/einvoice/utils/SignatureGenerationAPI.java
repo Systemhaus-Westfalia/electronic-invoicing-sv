@@ -66,17 +66,17 @@ public class SignatureGenerationAPI {
 	
 	public SignatureGenerationAPI(MClient client, String documentno, String eInvoiceAsJsonString){
 		
-		//setNit(client.getNIT());  // TODO: client.getNIT(): Feld NIT bei AD_Client anlegen
-		setNit("06140904181038");
+		//setNit("06140904181038");  // Nur zu Testzwecken
+		setNit(client.get_ValueAsString("ei_nit"));
 		
-		//setPasswordPri(client.getPrivatePassword());  // TODO: client.getPrivatePassword(): Feld PrivatePassword bei AD_Client anlegen
-		setPasswordPri("Port465fer");
+		// setPasswordPri("Port465fer");  // Nur zu Testzwecken
+		setPasswordPri(client.get_ValueAsString("ei_privatePassword"));
 		
-		//setPasswordPub(client.getPublicPassword());  // TODO: Feld PublicPassword bei AD_Client anlegen
-		setPasswordPub("DTEcofia");
+		//setPasswordPub("DTEcofia");  // Nur zu Testzwecken
+		setPasswordPub(client.get_ValueAsString("ei_publicPassword"));
 		
-		//setNombreFirma(client.getNameCompany());  // TODO: client.getNameCompany(): Feld NameCompany bei AD_Client anlegen
-		setNombreFirma("COFIA, S.A. de C.V");
+		//setNombreFirma("COFIA, S.A. de C.V");  // Nur zu Testzwecken
+		setNombreFirma(client.get_ValueAsString("ei_nameCompany"));
 		
 		setDteJson(eInvoiceAsJsonString);
 		setActivo(true);

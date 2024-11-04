@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Properties;
 
+import javax.ws.rs.client.Entity;
+
 import org.adempiere.core.domains.models.X_E_Activity;
 import org.apache.commons.lang3.StringUtils;
 import org.compiere.model.MBPartner;
@@ -475,6 +477,8 @@ public class CreditoFiscalFactory extends EDocumentFactory {
 		System.out.println("Credito Fiscal: generated JSON object from Document:");
 		//System.out.println(creditoFiscalAsStringFinal);
 		System.out.println("Credito Fiscal: end generating JSON object from Document");
+
+		Entity<String> entity = Entity.json(creditoFiscalAsStringFinal);
 		return creditoFiscalAsStringFinal;
 	}
 

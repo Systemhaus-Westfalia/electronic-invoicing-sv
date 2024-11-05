@@ -3,6 +3,7 @@ package org.shw.lsv.einvoice.factory;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 import java.util.Properties;
 
 import org.apache.commons.lang3.StringUtils;
@@ -235,9 +236,8 @@ public class NotaDeDebitoFactory extends EDocumentFactory {
 
 		String prefix = invoice.getC_DocType().getDefiniteSequence().getPrefix();
 		String documentno = invoice.getDocumentNo().replace(prefix,"");
-		int position = documentno.indexOf("_");
-		if (position>=0)
-			documentno = documentno.substring(0,position);
+		String suffix = Optional.ofNullable(invoice.getC_DocType().getDefiniteSequence().getSuffix()).orElse("");	
+		documentno = documentno.replace(suffix,"");
 		String idIdentification  = StringUtils.leftPad(documentno, 15,"0");
 		String duns = orgInfo.getDUNS().replace("-", "");
 		

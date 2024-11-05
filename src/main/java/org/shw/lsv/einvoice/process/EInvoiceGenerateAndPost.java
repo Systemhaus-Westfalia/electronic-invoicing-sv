@@ -29,6 +29,7 @@ import org.compiere.util.DB;
 import org.compiere.util.Env;
 import org.compiere.util.Trx;
 import org.shw.lsv.util.support.findex.Findex;
+import org.shw.lsv.util.support.findex.SV_minhacienda;
 import org.spin.model.MADAppRegistration;
 
 /** Generated Process for (EI_CreateInvoice_Electronic)
@@ -180,7 +181,7 @@ public class EInvoiceGenerateAndPost extends EInvoiceGenerateAndPostAbstract imp
 				+ "AND s.ApplicationType = ?"
 				+ "AND s.IsActive = 'Y'"
 				+ "AND s.Classname = ?)", get_TrxName())
-				.setParameters(applicationType, Findex.class.getName())
+				.setParameters(applicationType, SV_minhacienda.class.getName())
 				.<MADAppRegistration>first();
 
 		if(registration==null) {
@@ -190,9 +191,9 @@ public class EInvoiceGenerateAndPost extends EInvoiceGenerateAndPostAbstract imp
 			return errorMessage.toString();
 		}
 
-		Findex findex = new Findex();
-		findex.setVoided(false);
-		findex.setAppRegistrationId(registration.getAD_AppRegistration_ID() );
+		SV_minhacienda sv_minhacienda = new SV_minhacienda();
+		sv_minhacienda.setVoided(false);
+		sv_minhacienda.setAppRegistrationId(registration.getAD_AppRegistration_ID() );
 
 		String whereClause = IGenerateAndPost.getWhereclause(false);
 	
@@ -237,7 +238,7 @@ public class EInvoiceGenerateAndPost extends EInvoiceGenerateAndPostAbstract imp
 						Integer id = (Integer)invoiceId;
 	                    dbTransaction = Trx.get(id.toString(), true);   
 						MInvoice invoice = new MInvoice(Env.getCtx(), invoiceId, dbTransaction.getTrxName());
-						findex.publishDocument(invoice);
+						sv_minhacienda.publishDocument(invoice);
 						invoice.set_ValueOfColumn("ei_Processing", false);
 						invoice.saveEx();
 	                    if (dbTransaction != null) {

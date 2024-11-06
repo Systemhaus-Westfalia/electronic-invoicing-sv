@@ -23,9 +23,9 @@ public class SignatureGenerationAPI {
 	// Folgende Zeile ist zur Verwendung beim Testen auf dem Laptop.
 	//static final String SPRINGBOOT_APPLICATION_CONTEXT_PATH = "/home/westfalia/downloads/Adempiere/Adempiere_400/Historie/20240809-Elektronische-Fakturierung/Z_Temp/";
 	// Folgende Zeile muss beim Testen auskommentiert werden. Sie enthált das Verzeichnis des SpringBoot-Packages im ZK-Container.
-	static final String SPRINGBOOT_APPLICATION_CONTEXT_PATH = "/home/adempiere/persistent_files/SHW_electronic_invoicing/logs/";
+	static final String SPRINGBOOT_APPLICATION_CONTEXT_PATH = "/home/adempiere/persistent_files/SHW_electronic_invoicing/";
 	
-	static final String SPRINGBOOT_APPLICATION_LOGFILE_NAME = "ZZZ_Spring_2.log";
+	static final String SPRINGBOOT_APPLICATION_LOGFILE_NAME = "SHW_SpringBoot_Process.log";
 	static final String SPRINGBOOT_APPLICATION_ARGUMENT    	= "-Dlogging.file=";
 	
 	static final String SPRINGBOOT_SIGNATURE_RELATIVE_PATH  = "signatures/";
@@ -94,7 +94,8 @@ public class SignatureGenerationAPI {
 		setSpringBootLogFileArgument(SPRINGBOOT_APPLICATION_ARGUMENT + getSpringBootLogFileFullPath());  // Das wird aufgerufen
 		
 		setSignatureFilePath(getSpringBootApplicationContext() + getNit() + "/" + SPRINGBOOT_SIGNATURE_RELATIVE_PATH);
-		setSignatureFilePrefix(getNit() + "_" + getDateAsString() + "_" + getDocumentno());
+		String dateAsString = getDateAsString().replace(":", "_");  // Manche OSs erlauben keine ":" im Dateinamen
+		setSignatureFilePrefix(getNit() + "_" + dateAsString + "_" + getDocumentno());
 		setSignatureFileSuffix(SIGNATURE_SUFFIX);
 		setSignatureFileName(getSignatureFilePrefix() + getSignatureFileSuffix());
 		setSignatureFullFilePath(getSignatureFilePath() + getSignatureFileName());  // In dieser Datei wird die elektronische Unterschrift gespeichert.

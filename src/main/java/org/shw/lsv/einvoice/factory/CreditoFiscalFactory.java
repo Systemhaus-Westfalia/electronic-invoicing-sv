@@ -218,7 +218,7 @@ public class CreditoFiscalFactory extends EDocumentFactory {
 		String prefix = Optional.ofNullable(invoice.getC_DocType().getDefiniteSequence().getPrefix()).orElse("");
 		String documentno = invoice.getDocumentNo().replace(prefix,"");
 		String suffix = Optional.ofNullable(invoice.getC_DocType().getDefiniteSequence().getSuffix()).orElse("");	
-		documentno = invoice.getDocumentNo().replace(suffix,"");
+		documentno = documentno.replace(suffix,"");
 		String idIdentification  = StringUtils.leftPad(documentno, 15,"0");
 		String duns = orgInfo.getDUNS().replace("-", "");
 		

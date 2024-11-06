@@ -28,8 +28,8 @@ import org.compiere.model.Query;
 import org.compiere.util.DB;
 import org.compiere.util.Env;
 import org.compiere.util.Trx;
-import org.shw.lsv.util.support.findex.Findex;
-import org.shw.lsv.util.support.findex.SV_minhacienda;
+import org.shw.lsv.util.support.provider.Findex;
+import org.shw.lsv.util.support.provider.SVMinHacienda;
 import org.spin.model.MADAppRegistration;
 
 /** Generated Process for (EI_CreateInvoice_Electronic)
@@ -181,7 +181,7 @@ public class EInvoiceGenerateAndPost extends EInvoiceGenerateAndPostAbstract imp
 				+ "AND s.ApplicationType = ?"
 				+ "AND s.IsActive = 'Y'"
 				+ "AND s.Classname = ?)", get_TrxName())
-				.setParameters(applicationType, SV_minhacienda.class.getName())
+				.setParameters(applicationType, SVMinHacienda.class.getName())
 				.<MADAppRegistration>first();
 
 		if(registration==null) {
@@ -191,7 +191,7 @@ public class EInvoiceGenerateAndPost extends EInvoiceGenerateAndPostAbstract imp
 			return errorMessage.toString();
 		}
 
-		SV_minhacienda sv_minhacienda = new SV_minhacienda();
+		SVMinHacienda sv_minhacienda = new SVMinHacienda();
 		sv_minhacienda.setVoided(false);
 		sv_minhacienda.setAppRegistrationId(registration.getAD_AppRegistration_ID() );
 

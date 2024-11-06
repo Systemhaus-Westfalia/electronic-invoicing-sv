@@ -25,7 +25,7 @@ import org.adempiere.core.domains.models.X_E_InvoiceElectronic;
 import org.compiere.model.MInvoice;
 import org.compiere.model.PO;
 import org.shw.lsv.util.support.IDeclarationDocument;
-import org.shw.lsv.util.support.findex.ElectronicInvoice;
+import org.shw.lsv.util.support.provider.ElectronicInvoice;
 
 /** Generated Process for (EI_CreateInvoice_Electronic)
  *  @author ADempiere (generated) 

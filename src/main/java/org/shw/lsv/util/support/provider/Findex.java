@@ -13,7 +13,7 @@
  * You should have received a copy of the GNU General Public License                 *
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.            *
  ************************************************************************************/
-package org.shw.lsv.util.support.findex;
+package org.shw.lsv.util.support.provider;
 
 import java.sql.SQLException;
 import java.sql.Timestamp;

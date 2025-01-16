@@ -15,7 +15,7 @@ public class SignatureGenerationAPI {
 	// Folgende Zeile ist zur Verwendung beim Testen auf dem Laptop.
 	//static final String SPRINGBOOT_PACKAGE_PATH     	   = "/home/westfalia/downloads/Adempiere/Adempiere_400/Historie/20230820_Elektronische_Fakturierung/20240429_Programme-MMH/02-Repositories-geliefert_vom_MMHH/svfe-api-firmador/target/";
 	// Folgende Zeile muss beim Testen auskommentiert werden. Sie enthált das Verzeichnis des SpringBoot-Packages im ZK-Container. 
-	static final String SPRINGBOOT_PACKAGE_PATH     	   = "/home/adempiere/persistent_files/SHW_electronic_invoicing/springboot_package/";
+	static final String SPRINGBOOT_PACKAGE_PATH     	   = "C:\\Users\\SHW_User\\ElectronicPublishing\\springboot_package";
 
 	static final String SPRINGBOOT_PACKAGE_NAME     	   = "svfe-api-firmador-0.1.1.jar";
 	static final String SPRINGBOOT_PACKAGE_MAIN_CLASS     	= "sv.mh.fe.SHWElectronicSignature";
@@ -23,12 +23,12 @@ public class SignatureGenerationAPI {
 	// Folgende Zeile ist zur Verwendung beim Testen auf dem Laptop.
 	//static final String SPRINGBOOT_APPLICATION_CONTEXT_PATH = "/home/westfalia/downloads/Adempiere/Adempiere_400/Historie/20240809-Elektronische-Fakturierung/Z_Temp/";
 	// Folgende Zeile muss beim Testen auskommentiert werden. Sie enthált das Verzeichnis des SpringBoot-Packages im ZK-Container.
-	static final String SPRINGBOOT_APPLICATION_CONTEXT_PATH = "/home/adempiere/persistent_files/SHW_electronic_invoicing/";
-	
+	//static final String SPRINGBOOT_APPLICATION_CONTEXT_PATH = "/home/adempiere/persistent_files/SHW_electronic_invoicing/";
+	static final String SPRINGBOOT_APPLICATION_CONTEXT_PATH = "C:\\Users\\SHW_User\\ElectronicPublishing\\";
 	static final String SPRINGBOOT_APPLICATION_LOGFILE_NAME = "SHW_SpringBoot_Process.log";
 	static final String SPRINGBOOT_APPLICATION_ARGUMENT    	= "-Dlogging.file=";
 	
-	static final String SPRINGBOOT_SIGNATURE_RELATIVE_PATH  = "signatures/";
+	static final String SPRINGBOOT_SIGNATURE_RELATIVE_PATH  = "signatures\\";
 	static final String SIGNATURE_SUFFIX    	            = "_signature.txt";
 
 	private String passwordPub;
@@ -93,7 +93,7 @@ public class SignatureGenerationAPI {
 		setSpringBootLogFileFullPath(getSpringBootApplicationContext() + getSpringBootLogFileName());
 		setSpringBootLogFileArgument(SPRINGBOOT_APPLICATION_ARGUMENT + getSpringBootLogFileFullPath());  // Das wird aufgerufen
 		
-		setSignatureFilePath(getSpringBootApplicationContext() + getNit() + "/" + SPRINGBOOT_SIGNATURE_RELATIVE_PATH);
+		setSignatureFilePath(getSpringBootApplicationContext() + getNit() + "\\" + SPRINGBOOT_SIGNATURE_RELATIVE_PATH);
 		String dateAsString = getDateAsString().replace(":", "_");  // Manche OSs erlauben keine ":" im Dateinamen
 		setSignatureFilePrefix(getNit() + "_" + dateAsString + "_" + getDocumentno());
 		setSignatureFileSuffix(SIGNATURE_SUFFIX);

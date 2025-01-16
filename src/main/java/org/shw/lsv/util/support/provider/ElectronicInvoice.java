@@ -28,9 +28,10 @@ import org.shw.lsv.einvoice.factory.FacturaExportacionFactory;
 import org.shw.lsv.einvoice.factory.FacturaFactory;
 import org.shw.lsv.einvoice.factory.FacturaSujetoExcluidoFactory;
 import org.shw.lsv.einvoice.factory.NotaDeCreditoFactory;
+import org.shw.lsv.einvoice.factory.NotaDeDebitoFactory;
 import org.shw.lsv.einvoice.factory.RetencionFactory;
 import org.shw.lsv.einvoice.utils.EDocumentFactory;
-import org.shw.lsv.einvoice.utils.SignatureGenerationAPI;
+//import org.shw.lsv.einvoice.utils.SignatureGenerationAPI;
 import org.shw.lsv.util.support.IDeclarationDocument;
 
 /**
@@ -106,14 +107,14 @@ public class ElectronicInvoice implements IDeclarationDocument {
 		System.out.println("End documentFactory.createJsonString() for invoice " + invoice.getDocumentNo() );
 		
 		System.out.println("Start documentFactory.generateSignature() for invoice " + invoice.getDocumentNo() );
-		SignatureGenerationAPI signatureAPI = new SignatureGenerationAPI(client, invoice.getDocumentNo(), eInvoiceAsJsonString);
-    	String result = documentFactory.generateSignature(signatureAPI);
+		//SignatureGenerationAPI signatureAPI = new SignatureGenerationAPI(client, invoice.getDocumentNo(), eInvoiceAsJsonString);
+    	//String result = documentFactory.generateSignature(signatureAPI);
 
-		if (result!="") {  // ProcessBuilder muss Status==leere Zeichenkette zurück liefern
-			System.out.println("documentFactory.generateSignature() for invoice " + invoice.getDocumentNo() + "EXITED WITH ERROR");
-			System.out.println(result);
-		}
-		System.out.println("End documentFactory.generateSignature() for invoice " + invoice.getDocumentNo() );
+		//if (result!="") {  // ProcessBuilder muss Status==leere Zeichenkette zurück liefern
+		//	System.out.println("documentFactory.generateSignature() for invoice " + invoice.getDocumentNo() + "EXITED WITH ERROR");
+		//	System.out.println(result);
+		//}
+		//System.out.println("End documentFactory.generateSignature() for invoice " + invoice.getDocumentNo() );
 		
     	String ei_codigoGeneracion = documentFactory.getCodigoGeneracion(eInvoiceAsJsonString);
     	String ei_numeroControl = "";
@@ -162,6 +163,9 @@ public class ElectronicInvoice implements IDeclarationDocument {
 			System.out.println("Se procesa el tipo de documento 'Factura de Exportacion'");
 		} else if (e_DocType.getValue().equals("14")) {		// Factura Sujeto Excluido
 			documentFactory = new FacturaSujetoExcluidoFactory(invoice.get_TrxName(), invoice.getCtx(), client, orgInfo, invoice);
+			System.out.println("Se procesa el tipo de documento 'Sujeto Excluido'");
+		}else if (e_DocType.getValue().equals("06")) {		// Factura Sujeto Excluido
+			documentFactory = new NotaDeDebitoFactory(invoice.get_TrxName(), invoice.getCtx(), client, orgInfo, invoice);
 			System.out.println("Se procesa el tipo de documento 'Sujeto Excluido'");
 		}
 		return documentFactory;

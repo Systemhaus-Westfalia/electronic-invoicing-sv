@@ -43,6 +43,7 @@ import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.HttpUrlConnectorProvider;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.shw.lsv.einvoice.process.IGenerateAndPost;
 import org.shw.lsv.util.support.IDeclarationDocument;
 import org.shw.lsv.util.support.IDeclarationProvider;
 import org.spin.model.MADAppRegistration;
@@ -53,25 +54,33 @@ import com.fasterxml.jackson.annotation.JsonInclude;
  * 	A implementation class for findex.la provider using LSV
  * 	@author Yamel Senih, ysenih@erpya.com, ERPCyA http://www.erpya.com
  */
-public class SVMinHaciendaToken implements IDeclarationProvider {
+public class SVMinHaciendaSignature implements IDeclarationProvider {
 	public static final int HTTP_RESPONSE_200_OK = 200;
 	public static final int HTTP_RESPONSE_201_CREATED = 201;
-	private final String PROVIDER_HOST =  "providerhost"; 
-	private final String PWD = "pwd";
-	private final String USER = "user";
+	private final String PROVIDER_HOST =  "providerhost"; // "https://pruebas.findex.la"
 
 	private final String PATH = "path";
 	
 	private String providerHost = null;
 	private String path = null;
-	private String user = null;
-	private String pwd = null;
 	private int registrationId = 0;
 	private boolean voided = false;
 	private MClient client;
 	
 
-	public SVMinHaciendaToken() {
+	public SVMinHaciendaSignature(int adClientID) {
+
+		MADAppRegistration registration = null;
+		String applicationType = IGenerateAndPost.getApplicationType();
+		registration = new Query(Env.getCtx(), MADAppRegistration.Table_Name, "EXISTS(SELECT 1 FROM AD_AppSupport s "
+				+ "WHERE s.AD_AppSupport_ID = AD_AppRegistration.AD_AppSupport_ID "
+				+ "AND s.ApplicationType = ?"
+				+ "AND s.IsActive = 'Y'"
+				+ "AND s.Classname = ?)", null)
+				.setParameters(applicationType, SVMinHacienda.class.getName())
+				.<MADAppRegistration>first();
+		setAppRegistrationId(registration.getAD_AppRegistration_ID());
+
 	}
 	
 	/**
@@ -86,9 +95,7 @@ public class SVMinHaciendaToken implements IDeclarationProvider {
 			throw new AdempiereException("@AD_AppRegistration_ID@ @NotFound@");
 		}
 		this.providerHost 	= registration.getParameterValue(PROVIDER_HOST);
-		this.path 			= registration.getParameterValue(PATH);
-		this.user 			= client.get_ValueAsString("ei_nit");
-		this.pwd 			= registration.getParameterValue(PWD);
+		this.path 			= registration.getParameterValue(PATH);  
 	}
 
 	@Override
@@ -123,10 +130,7 @@ public class SVMinHaciendaToken implements IDeclarationProvider {
 	public void setVoided(boolean voided) {
 		this.voided = voided;
 	}
-
-	@Override
-	@JsonInclude(JsonInclude.Include.ALWAYS)
-	public String publishDocument(PO document) throws Exception {
+	public String getSignature(String json) {
 		Invocation.Builder invocationBuilder = getClient().target(providerHost)
 				.path(path)
 				//.path("api")
@@ -136,11 +140,8 @@ public class SVMinHaciendaToken implements IDeclarationProvider {
 				.header(HttpHeaders.ACCEPT, "*/*")
 				;
 		Form form = new Form();
-		form.param(PWD, this.pwd);
-		form.param(USER, this.user);
-
-		//form.param("pwd", "Qazxsw369!");
-		//form.param("user", "06140904181038");
+		form.param("pwd", "Qazxsw369!");
+		form.param("user", "06140904181038");
 		Entity<Form> entity = Entity.form(form);
 		Response response = invocationBuilder.post(entity);
 		if (response.getStatus()==HTTP_RESPONSE_200_OK) {
@@ -149,14 +150,18 @@ public class SVMinHaciendaToken implements IDeclarationProvider {
 			JSONObject jsonoutput = new JSONObject(output); 	
 			JSONObject body = jsonoutput.getJSONObject("body");
         	String token = body.getString("token");
-        	token = token.trim();
         	client.set_ValueOfColumn("ei_jwt", token);
-        	client.saveEx();     
-		}
-		else {
-			return "No token";
+        	client.saveEx();
+        	
+        	int i=1;
 		}
 		return null;
+	
+	}
+	@Override
+	@JsonInclude(JsonInclude.Include.ALWAYS)
+	public String publishDocument(PO document) throws Exception {
+		return "";
 	}
 
 	/**

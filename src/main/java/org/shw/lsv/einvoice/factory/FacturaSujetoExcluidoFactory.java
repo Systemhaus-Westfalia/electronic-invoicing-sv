@@ -222,7 +222,7 @@ public class FacturaSujetoExcluidoFactory extends EDocumentFactory {
 	private JSONObject generateIdentificationInputData() {
 		System.out.println("Factura: start collecting JSON data for Identificacion");
 
-		String prefix = invoice.getC_DocType().getDefiniteSequence().getPrefix();
+		String prefix = Optional.ofNullable(invoice.getC_DocType().getDefiniteSequence().getPrefix()).orElse("");	
 		String documentno = invoice.getDocumentNo().replace(prefix,"");
 		String suffix = Optional.ofNullable(invoice.getC_DocType().getDefiniteSequence().getSuffix()).orElse("");	
 		documentno = documentno.replace(suffix,"");

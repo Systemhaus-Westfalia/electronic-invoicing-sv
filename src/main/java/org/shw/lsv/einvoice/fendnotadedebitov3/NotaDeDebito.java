@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.shw.lsv.einvoice.fencnotadecreditov1.CuerpoDocumentoItemNotaDeCredito;
 import org.shw.lsv.einvoice.utils.EDocument;
 import org.shw.lsv.einvoice.utils.EDocumentUtils;
 import org.shw.lsv.einvoice.utils.PagosItem;
@@ -76,8 +77,10 @@ public class NotaDeDebito extends EDocument {
 		System.out.println("Start NotaDeDebito.fillIdentificacion()");
 
 		JSONObject identificationJson = factoryInput.getJSONObject(IDENTIFICACION);
-		try {identificacion.setMotivoContin(identificationJson.getString(MOTIVOCONTIN));} 			catch (Exception e) {errorMessages.append(ERROR_NOTA_DE_DEBITO_IDENTIFICACION + e);}
-		try {identificacion.setTipoContingencia(identificationJson.getInt(TIPOCONTINGENCIA));} 		catch (Exception e) {errorMessages.append(ERROR_NOTA_DE_DEBITO_IDENTIFICACION + e);}
+		if (!identificationJson.getString(MOTIVOCONTIN).equals("")) {		
+			try {identificacion.setMotivoContin(identificationJson.getString(MOTIVOCONTIN));} 		catch (Exception e) {errorMessages.append(ERROR_NOTA_DE_DEBITO_IDENTIFICACION + e);}
+			try {identificacion.setTipoContingencia(identificationJson.getInt(TIPOCONTINGENCIA));}	catch (Exception e) {errorMessages.append(ERROR_NOTA_DE_DEBITO_IDENTIFICACION + e);}
+		}
 		try {identificacion.setNumeroControl(identificationJson.getString(NUMEROCONTROL));} 		catch (Exception e) {errorMessages.append(ERROR_NOTA_DE_DEBITO_IDENTIFICACION + e);}
 		try {identificacion.setCodigoGeneracion(identificationJson.getString(CODIGOGENERACION));} 	catch (Exception e) {errorMessages.append(ERROR_NOTA_DE_DEBITO_IDENTIFICACION + e);}
 		try {identificacion.setTipoModelo(identificationJson.getInt(TIPOMODELO));} 					catch (Exception e) {errorMessages.append(ERROR_NOTA_DE_DEBITO_IDENTIFICACION + e);}
@@ -205,33 +208,33 @@ public class NotaDeDebito extends EDocument {
 		JSONObject cuerpoDocumentoItemsJson = factoryInput.getJSONObject(CUERPODOCUMENTO);
 		JSONArray cuerpoDocumentoArrayJson = cuerpoDocumentoItemsJson.getJSONArray(CUERPODOCUMENTO);
 	
-		for (int i=0; i< cuerpoDocumentoArrayJson.length(); i++) { 
+		for (int i=0; i< cuerpoDocumentoArrayJson.length(); i++) {
 			JSONObject cuerpoDocumentoItemJson = cuerpoDocumentoArrayJson.getJSONObject(i);
 			CuerpoDocumentoItemNotaDeDebito cuerpoDocumentoItemNotaDeDebito = new CuerpoDocumentoItemNotaDeDebito();
 			try {cuerpoDocumentoItemNotaDeDebito.setNumItem(cuerpoDocumentoItemJson.getInt(NUMITEM));} 					catch (Exception e) {errorMessages.append(ERROR_NOTA_DE_DEBITO_CUERPO_DOCUMENTO + e);}
-			try {cuerpoDocumentoItemNotaDeDebito.setTipoItem(cuerpoDocumentoItemJson.getInt(TIPOITEM));} 				catch (Exception e) {errorMessages.append(ERROR_NOTA_DE_DEBITO_CUERPO_DOCUMENTO + e);}
-			//try {cuerpoDocumentoItemNotaDeDebito.setNumeroDocumento(cuerpoDocumentoItemJson.getString(NUMERODOCUMENTO));} 	catch (Exception e) {errorMessages.append(ERROR_NOTA_DE_DEBITO_CUERPO_DOCUMENTO + e);}
-			try {cuerpoDocumentoItemNotaDeDebito.setCantidad(cuerpoDocumentoItemJson.getBigDecimal(CANTIDAD));} 		catch (Exception e) {errorMessages.append(ERROR_NOTA_DE_DEBITO_CUERPO_DOCUMENTO + e);}
-			try {cuerpoDocumentoItemNotaDeDebito.setCodigo(cuerpoDocumentoItemJson.getString(CODIGO));} 				catch (Exception e) {errorMessages.append(ERROR_NOTA_DE_DEBITO_CUERPO_DOCUMENTO + e);}
-			
+			try {cuerpoDocumentoItemNotaDeDebito.setTipoItem(cuerpoDocumentoItemJson.getInt(TIPOITEM));} 					catch (Exception e) {errorMessages.append(ERROR_NOTA_DE_DEBITO_CUERPO_DOCUMENTO + e);}
+			try {cuerpoDocumentoItemNotaDeDebito.setNumeroDocumento(cuerpoDocumentoItemJson.getString(NUMERODOCUMENTO));} 	catch (Exception e) {errorMessages.append(ERROR_NOTA_DE_DEBITO_CUERPO_DOCUMENTO + e);}
+			try {cuerpoDocumentoItemNotaDeDebito.setCantidad(cuerpoDocumentoItemJson.getBigDecimal(CANTIDAD));} 			catch (Exception e) {errorMessages.append(ERROR_NOTA_DE_DEBITO_CUERPO_DOCUMENTO + e);}
+			try {cuerpoDocumentoItemNotaDeDebito.setCodigo(cuerpoDocumentoItemJson.getString(CODIGO));} 					catch (Exception e) {errorMessages.append(ERROR_NOTA_DE_DEBITO_CUERPO_DOCUMENTO + e);}
+
 			if (cuerpoDocumentoItemJson.getString(CODTRIBUTO).equals(""))
 				try {cuerpoDocumentoItemNotaDeDebito.setCodTributo(null);} 												catch (Exception e) {errorMessages.append(ERROR_NOTA_DE_DEBITO_CUERPO_DOCUMENTO + e);}
 			else
-				try {cuerpoDocumentoItemNotaDeDebito.setCodTributo(cuerpoDocumentoItemJson.getString(CODTRIBUTO));} 	catch (Exception e) {errorMessages.append(ERROR_NOTA_DE_DEBITO_CUERPO_DOCUMENTO + e);}
+				try {cuerpoDocumentoItemNotaDeDebito.setCodTributo(cuerpoDocumentoItemJson.getString(CODTRIBUTO));} 		catch (Exception e) {errorMessages.append(ERROR_NOTA_DE_DEBITO_CUERPO_DOCUMENTO + e);}
 
 			try {cuerpoDocumentoItemNotaDeDebito.setUniMedida(cuerpoDocumentoItemJson.getInt(UNIMEDIDA));} 				catch (Exception e) {errorMessages.append(ERROR_NOTA_DE_DEBITO_CUERPO_DOCUMENTO + e);}
-			try {cuerpoDocumentoItemNotaDeDebito.setDescripcion(cuerpoDocumentoItemJson.getString(DESCRIPCION));} 		catch (Exception e) {errorMessages.append(ERROR_NOTA_DE_DEBITO_CUERPO_DOCUMENTO + e);}
-			try {cuerpoDocumentoItemNotaDeDebito.setPrecioUni(cuerpoDocumentoItemJson.getBigDecimal(PRECIOUNI));} 		catch (Exception e) {errorMessages.append(ERROR_NOTA_DE_DEBITO_CUERPO_DOCUMENTO + e);}
-			try {cuerpoDocumentoItemNotaDeDebito.setMontoDescu(cuerpoDocumentoItemJson.getBigDecimal(MONTODESCU));} 	catch (Exception e) {errorMessages.append(ERROR_NOTA_DE_DEBITO_CUERPO_DOCUMENTO + e);}
-			try {cuerpoDocumentoItemNotaDeDebito.setVentaNoSuj(cuerpoDocumentoItemJson.getBigDecimal(VENTANOSUJ));} 	catch (Exception e) {errorMessages.append(ERROR_NOTA_DE_DEBITO_CUERPO_DOCUMENTO + e);}
-			try {cuerpoDocumentoItemNotaDeDebito.setVentaExenta(cuerpoDocumentoItemJson.getBigDecimal(VENTAEXENTA));} 	catch (Exception e) {errorMessages.append(ERROR_NOTA_DE_DEBITO_CUERPO_DOCUMENTO + e);}
-			try {cuerpoDocumentoItemNotaDeDebito.setVentaGravada(cuerpoDocumentoItemJson.getBigDecimal(VENTAGRAVADA));}	catch (Exception e) {errorMessages.append(ERROR_NOTA_DE_DEBITO_CUERPO_DOCUMENTO + e);}
-			
+			try {cuerpoDocumentoItemNotaDeDebito.setDescripcion(cuerpoDocumentoItemJson.getString(DESCRIPCION));} 			catch (Exception e) {errorMessages.append(ERROR_NOTA_DE_DEBITO_CUERPO_DOCUMENTO + e);}
+			try {cuerpoDocumentoItemNotaDeDebito.setPrecioUni(cuerpoDocumentoItemJson.getBigDecimal(PRECIOUNI));} 			catch (Exception e) {errorMessages.append(ERROR_NOTA_DE_DEBITO_CUERPO_DOCUMENTO + e);}
+			try {cuerpoDocumentoItemNotaDeDebito.setMontoDescu(cuerpoDocumentoItemJson.getBigDecimal(MONTODESCU));} 		catch (Exception e) {errorMessages.append(ERROR_NOTA_DE_DEBITO_CUERPO_DOCUMENTO + e);}
+			try {cuerpoDocumentoItemNotaDeDebito.setVentaNoSuj(cuerpoDocumentoItemJson.getBigDecimal(VENTANOSUJ));} 		catch (Exception e) {errorMessages.append(ERROR_NOTA_DE_DEBITO_CUERPO_DOCUMENTO + e);}
+			try {cuerpoDocumentoItemNotaDeDebito.setVentaExenta(cuerpoDocumentoItemJson.getBigDecimal(VENTAEXENTA));} 		catch (Exception e) {errorMessages.append(ERROR_NOTA_DE_DEBITO_CUERPO_DOCUMENTO + e);}
+			try {cuerpoDocumentoItemNotaDeDebito.setVentaGravada(cuerpoDocumentoItemJson.getBigDecimal(VENTAGRAVADA));} 	catch (Exception e) {errorMessages.append(ERROR_NOTA_DE_DEBITO_CUERPO_DOCUMENTO + e);}
+
 			JSONArray tributosArrayJson = cuerpoDocumentoItemJson.getJSONArray(TRIBUTOS);
 			for (int j=0; j< tributosArrayJson.length(); j++) { 
 				String tributosItemJson = tributosArrayJson.getString(j);
 				try {cuerpoDocumentoItemNotaDeDebito.getTributos().add(tributosItemJson);} 								catch (Exception e) {errorMessages.append(ERROR_NOTA_DE_DEBITO_CUERPO_DOCUMENTO + e);}	
-			}			
+			}
 
 			cuerpoDocumento.add(cuerpoDocumentoItemNotaDeDebito);						
 		}

@@ -517,12 +517,12 @@ public class NotaDeCreditoFactory extends EDocumentFactory {
 		HashMap<Integer,MInvoice> invoiceIds = new HashMap<Integer, MInvoice>();
 		for (MInvoiceLine invoiceLine:invoice.getLines()) {
 			MInvoiceLine invoiceLineOrg = new MInvoiceLine(contextProperties, invoiceLine.getRef_InvoiceLine_ID(), null);
-			invoiceIds.put(invoiceLineOrg.getC_Invoice_ID(), invoiceLine_getRef_InvoiceLine_getC_Invoice(invoiceLineOrg));
+			invoiceIds.put(invoiceLineOrg.getC_Invoice_ID(), (MInvoice)invoiceLineOrg.getC_Invoice());
 		}  
 		for (MInvoice invoiceOrginal : invoiceIds.values()) {
 			JSONObject jsonDocumentoRelacionadoItem = new JSONObject();
 			jsonDocumentoRelacionadoItem.put(NotaDeCredito.TIPODOCUMENTO, docType_getE_DocType((MDocType)invoiceOrginal.getC_DocType()).getValue());
-			int tipoGeneracion = invoice_ei_codigoGeneracion(invoiceOrginal) == null? 1:2;
+			int tipoGeneracion = invoice_ei_codigoGeneracion(invoiceOrginal) == ""? 1:2;
 			jsonDocumentoRelacionadoItem.put(NotaDeCredito.TIPOGENERACION, tipoGeneracion);
 			String documentno = tipoGeneracion==2?   invoice_ei_codigoGeneracion(invoiceOrginal)   :invoiceOrginal.getDocumentNo();
 			jsonDocumentoRelacionadoItem.put(NotaDeCredito.NUMERODOCUMENTO, documentno);

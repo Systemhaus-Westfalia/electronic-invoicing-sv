@@ -268,7 +268,7 @@ public class CreditoFiscalFactory extends EDocumentFactory {
 		int activityID = client.get_ValueAsInt(Columnname_E_Activity_ID);
 		X_E_Activity e_Activity = new X_E_Activity(Env.getCtx(), activityID, trxName);
 		JSONObject jsonObjectEmisor = new JSONObject();
-		jsonObjectEmisor.put(CreditoFiscal.NIT, orgInfo.getTaxID().replace("-", ""));
+		jsonObjectEmisor.put(CreditoFiscal.NIT, client.get_ValueAsString("ei_nit"));
 		jsonObjectEmisor.put(CreditoFiscal.NRC, StringUtils.leftPad(orgInfo.getDUNS().trim().replace("-", ""), 7));
 		jsonObjectEmisor.put(CreditoFiscal.NOMBRE, client.getDescription());
 		jsonObjectEmisor.put(CreditoFiscal.CODACTIVIDAD, e_Activity.getValue());
@@ -310,6 +310,7 @@ public class CreditoFiscalFactory extends EDocumentFactory {
 		String duns = Optional.ofNullable(partner.getDUNS()).orElse("");
 		jsonObjectReceptor.put(CreditoFiscal.NRC, duns.trim().replace("-", ""));
 		jsonObjectReceptor.put(CreditoFiscal.NOMBRE, partner.getName());
+		jsonObjectReceptor.put(CreditoFiscal.CORREO, partner.get_ValueAsString("EMail"));
 		
 		if (bPartner_getE_Activity(partner).getE_Activity_ID()>0) {
 			jsonObjectReceptor.put(CreditoFiscal.CODACTIVIDAD, bPartner_getE_Activity(partner).getValue());

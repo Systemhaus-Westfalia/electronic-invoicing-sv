@@ -37,13 +37,13 @@ import org.shw.lsv.einvoice.utils.EDocumentUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class NotaDeDebitoFactory extends EDocumentFactory {
-	NotaDeDebito notaDeCredito;
+	NotaDeDebito notaDeDebito;
 	MInvoice invoice;
 	
 	public NotaDeDebitoFactory(String trxName, Properties contextProperties, MClient client, MOrgInfo orgInfo, MInvoice invoice) {
 		super(trxName, contextProperties, client, orgInfo);
 		this.invoice = invoice;
-		notaDeCredito = new NotaDeDebito();
+		notaDeDebito = new NotaDeDebito();
 	}
 
 	public NotaDeDebito generateEDocument() {
@@ -51,12 +51,12 @@ public class NotaDeDebitoFactory extends EDocumentFactory {
 		String result="";
 
 		System.out.println("Instantiate, fill and verify Identificacion");		
-		IdentificacionNotaDeDebito identification = notaDeCredito.getIdentificacion();
+		IdentificacionNotaDeDebito identification = notaDeDebito.getIdentificacion();
 		if(identification!=null) {
-			notaDeCredito.errorMessages.append(notaDeCredito.fillIdentification(jsonInputToFactory));
+			notaDeDebito.errorMessages.append(notaDeDebito.fillIdentification(jsonInputToFactory));
 			result = identification.validateValues();
 			if(! result.equals(EDocumentUtils.VALIDATION_RESULT_OK)) {
-				notaDeCredito.errorMessages.append(result);
+				notaDeDebito.errorMessages.append(result);
 			}
 		}
 		
@@ -74,12 +74,12 @@ public class NotaDeDebitoFactory extends EDocumentFactory {
 //		}
 
 		System.out.println("Instantiate, fill and verify Emisor");
-		EmisorNotaDeDebito emisor = notaDeCredito.getEmisor();
+		EmisorNotaDeDebito emisor = notaDeDebito.getEmisor();
 		if(emisor!=null) {
-			notaDeCredito.fillEmisor(jsonInputToFactory);
+			notaDeDebito.fillEmisor(jsonInputToFactory);
 			result = emisor.validateValues();
 			if(! result.equals(EDocumentUtils.VALIDATION_RESULT_OK)) {
-				notaDeCredito.errorMessages.append(result);
+				notaDeDebito.errorMessages.append(result);
 			}
 		}
 		
@@ -106,50 +106,50 @@ public class NotaDeDebitoFactory extends EDocumentFactory {
 //		}
 
 		System.out.println("Instantiate, fill and verify Cuerpo Documento");
-		List<DocumentoRelacionadoItemNotaDeDebito> documentosRelacionados = notaDeCredito.getDocumentoRelacionado();
+		List<DocumentoRelacionadoItemNotaDeDebito> documentosRelacionados = notaDeDebito.getDocumentoRelacionado();
 		if(documentosRelacionados!=null) {
-			notaDeCredito.fillDocumentosRelacionados(jsonInputToFactory);
+			notaDeDebito.fillDocumentosRelacionados(jsonInputToFactory);
 			
 			documentosRelacionados.stream().forEach( documentoRelacionadoItem -> { 
 				String resultLambda = documentoRelacionadoItem.validateValues();
 					if(! resultLambda.equals(EDocumentUtils.VALIDATION_RESULT_OK)) {
-						notaDeCredito.errorMessages.append(resultLambda);
+						notaDeDebito.errorMessages.append(resultLambda);
 					}
 				} 
 			);
 		}
 		
 		System.out.println("Instantiate, fill and verify Documento Relacionados");
-		List<CuerpoDocumentoItemNotaDeDebito> cuerpoDocumento = notaDeCredito.getCuerpoDocumento();
+		List<CuerpoDocumentoItemNotaDeDebito> cuerpoDocumento = notaDeDebito.getCuerpoDocumento();
 		if(cuerpoDocumento!=null) {
-			notaDeCredito.fillCuerpoDocumento(jsonInputToFactory);
+			notaDeDebito.fillCuerpoDocumento(jsonInputToFactory);
 			
 			cuerpoDocumento.stream().forEach( cuerpoDocumentoItem -> { 
 				String resultLambda = cuerpoDocumentoItem.validateValues();
 					if(! resultLambda.equals(EDocumentUtils.VALIDATION_RESULT_OK)) {
-						notaDeCredito.errorMessages.append(resultLambda);
+						notaDeDebito.errorMessages.append(resultLambda);
 					}
 				} 
 			);
 		}
 
 		System.out.println("Instantiate, fill and verify Resumen");
-		ResumenNotaDeDebito resumen = notaDeCredito.getResumen();
+		ResumenNotaDeDebito resumen = notaDeDebito.getResumen();
 		if(resumen!=null) {
-			notaDeCredito.fillResumen(jsonInputToFactory);
+			notaDeDebito.fillResumen(jsonInputToFactory);
 			result = resumen.validateValues();
 			if(! result.equals(EDocumentUtils.VALIDATION_RESULT_OK)) {
-				notaDeCredito.errorMessages.append(result);
+				notaDeDebito.errorMessages.append(result);
 			}
 		}
 
 		System.out.println("Instantiate, fill and verify Receptor");
-		ReceptorNotaDeDebito receptor = notaDeCredito.getReceptor();
+		ReceptorNotaDeDebito receptor = notaDeDebito.getReceptor();
 		if(receptor!=null) {
-			notaDeCredito.fillReceptor(jsonInputToFactory);
+			notaDeDebito.fillReceptor(jsonInputToFactory);
 			result = receptor.validateValues();
 			if(! result.equals(EDocumentUtils.VALIDATION_RESULT_OK)) {
-				notaDeCredito.errorMessages.append(result);
+				notaDeDebito.errorMessages.append(result);
 			}
 		}
 		
@@ -194,13 +194,13 @@ public class NotaDeDebitoFactory extends EDocumentFactory {
 //			}
 //		}
 
-		notaDeCredito.validateValues();
+		notaDeDebito.validateValues();
 		if(! result.equals(EDocumentUtils.VALIDATION_RESULT_OK)) {
-			notaDeCredito.errorMessages.append(result);
+			notaDeDebito.errorMessages.append(result);
 		}
 
 		System.out.println("Nota de Debito: end generating and filling the Document");	
-		return notaDeCredito;
+		return notaDeDebito;
 	}
 
 	@Override
@@ -212,8 +212,8 @@ public class NotaDeDebitoFactory extends EDocumentFactory {
 		jsonInputToFactory.put(NotaDeDebito.RECEPTOR, generateReceptorInputData());
 		jsonInputToFactory.put(NotaDeDebito.EMISOR, generateEmisorInputData());
 		jsonInputToFactory.put(NotaDeDebito.RESUMEN, generateResumenInputData());
-		jsonInputToFactory.put(NotaDeDebito.CUERPODOCUMENTO, generateCuerpoDocumentoInputData());
 		jsonInputToFactory.put(NotaDeDebito.DOCUMENTORELACIONADO, generateDocumentoRelacionadoInputData());
+		jsonInputToFactory.put(NotaDeDebito.CUERPODOCUMENTO, generateCuerpoDocumentoInputData());
 		
 		System.out.println("Generated JSON object from Invoice:");
 		System.out.println(jsonInputToFactory.toString());
@@ -223,8 +223,8 @@ public class NotaDeDebitoFactory extends EDocumentFactory {
 	private JSONObject generateIdentificationInputData() {
 		System.out.println("Start collecting JSON data for Identificacion");
 		
-		String motivoContin      = null;
-		Integer tipoContingencia = null;
+		String motivoContin      = "";
+		Integer tipoContingencia = 0;
 		int tipoModelo           = 1;
 		int tipoOperacion        = 1;
 		if (TimeUtil.getDaysBetween(invoice.getDateAcct(), TimeUtil.getDay(0))>=3) {
@@ -298,14 +298,14 @@ public class NotaDeDebitoFactory extends EDocumentFactory {
 		MBPartner partner = (MBPartner)invoice.getC_BPartner();
 		if (bPartner_getE_Activity(partner).getE_Activity_ID()<=0 || bPartner_getE_Recipient_Identification(partner).getE_Recipient_Identification_ID() <= 0) {
 			String errorMessage = "Socio de Negocio " + partner.getName() + ": Falta configuracion para Facturacion Electronica"; 
-			notaDeCredito.errorMessages.append(errorMessage);
+			notaDeDebito.errorMessages.append(errorMessage);
 			System.out.println(errorMessage);
 		}
 		
 		JSONObject jsonObjectReceptor = new JSONObject();
 		if (partner.getTaxID() == null && partner.getDUNS() == null) {
 			String errorMessage = "Socio de Negocio " + partner.getName() + ": Falta configuracion para Facturacion Electronica"; 
-			notaDeCredito.errorMessages.append(errorMessage);
+			notaDeDebito.errorMessages.append(errorMessage);
 			System.out.println(errorMessage);
 		}
 		jsonObjectReceptor.put(NotaDeDebito.NIT, partner.getTaxID().replace("-", ""));
@@ -457,10 +457,14 @@ public class NotaDeDebitoFactory extends EDocumentFactory {
 			}
 			
 			JSONObject jsonCuerpoDocumentoItem = new JSONObject();
+			MInvoice refInvoice = invoiceLine_getRef_InvoiceLine_getC_Invoice(invoiceLine);
+            String numerodocumentno = invoice_ei_codigoGeneracion(refInvoice)!=null?
+            		invoice_ei_codigoGeneracion(refInvoice):
+            			refInvoice.getDocumentNo();  
                 
 			jsonCuerpoDocumentoItem.put(NotaDeDebito.NUMITEM, invoiceLine.getLine()/10);
 			jsonCuerpoDocumentoItem.put(NotaDeDebito.TIPOITEM, 2);
-			jsonCuerpoDocumentoItem.put(NotaDeDebito.NUMERODOCUMENTO, getNumeroControl(invoice.get_ID(), orgInfo, "DTE-01-"));
+			jsonCuerpoDocumentoItem.put(NotaDeDebito.NUMERODOCUMENTO, numerodocumentno);
 			jsonCuerpoDocumentoItem.put(NotaDeDebito.CANTIDAD, invoiceLine.getQtyInvoiced());
 			jsonCuerpoDocumentoItem.put(NotaDeDebito.CODIGO, invoiceLine.getM_Product_ID()>0? invoiceLine.getProduct().getValue(): invoiceLine.getC_Charge().getName());
 			jsonCuerpoDocumentoItem.put(NotaDeDebito.CODTRIBUTO, "");  // String codTributo = "20";
@@ -471,10 +475,12 @@ public class NotaDeDebitoFactory extends EDocumentFactory {
 			jsonCuerpoDocumentoItem.put(NotaDeDebito.VENTANOSUJ, ventaNoSuj);
 			jsonCuerpoDocumentoItem.put(NotaDeDebito.VENTAEXENTA, ventaExenta);
 			jsonCuerpoDocumentoItem.put(NotaDeDebito.VENTAGRAVADA, ventaGravada);	
-			
+
 			JSONArray jsonTributosArray = new JSONArray();
-			jsonTributosArray.put(tax_getE_Duties(tax).getValue());
-			jsonCuerpoDocumentoItem. put( NotaDeDebito.TRIBUTOS, jsonTributosArray); //tributosItems.add("20");			
+			if (ventaGravada.compareTo(Env.ZERO) != 0) {
+				jsonTributosArray.put(tax_getE_Duties(tax).getValue());
+			}
+			jsonCuerpoDocumentoItem.put( NotaDeDebito.TRIBUTOS, jsonTributosArray);
 
 			jsonCuerpoDocumentoArray.put(jsonCuerpoDocumentoItem);
 			System.out.println("Collect JSON data for Cuerpo Documento. Document: " + invoice.getDocumentNo() + ", Line: " + invoiceLine.getLine() + " Finished");
@@ -495,13 +501,15 @@ public class NotaDeDebitoFactory extends EDocumentFactory {
 		HashMap<Integer,MInvoice> invoiceIds = new HashMap<Integer, MInvoice>();
 		for (MInvoiceLine invoiceLine:invoice.getLines()) {
 			MInvoiceLine invoiceLineOrg = new MInvoiceLine(contextProperties, invoiceLine.getRef_InvoiceLine_ID(), null);
-			invoiceIds.put(invoiceLineOrg.getC_Invoice_ID(), invoiceLine_getRef_InvoiceLine_getC_Invoice(invoiceLine));
+			invoiceIds.put(invoiceLineOrg.getC_Invoice_ID(), (MInvoice)invoiceLineOrg.getC_Invoice());
 		}  
 		for (MInvoice invoiceOrginal : invoiceIds.values()) {
 			JSONObject jsonDocumentoRelacionadoItem = new JSONObject();
 			jsonDocumentoRelacionadoItem.put(NotaDeDebito.TIPODOCUMENTO, docType_getE_DocType((MDocType)invoiceOrginal.getC_DocType()).getValue());
-			jsonDocumentoRelacionadoItem.put(NotaDeDebito.TIPOGENERACION, 1);
-			jsonDocumentoRelacionadoItem.put(NotaDeDebito.NUMERODOCUMENTO, invoiceOrginal.getDocumentNo());
+			int tipoGeneracion = invoice_ei_codigoGeneracion(invoiceOrginal) == ""? 1:2;
+			jsonDocumentoRelacionadoItem.put(NotaDeDebito.TIPOGENERACION, tipoGeneracion);
+			String documentno = tipoGeneracion==2?   invoice_ei_codigoGeneracion(invoiceOrginal)   :invoiceOrginal.getDocumentNo();
+			jsonDocumentoRelacionadoItem.put(NotaDeDebito.NUMERODOCUMENTO, documentno);
 			jsonDocumentoRelacionadoItem.put(NotaDeDebito.FECEMI, invoiceOrginal.getDateAcct().toString().substring(0, 10));
 			jsonDocumentoRelacionadoArray.put(jsonDocumentoRelacionadoItem);
 		}
@@ -515,7 +523,7 @@ public class NotaDeDebitoFactory extends EDocumentFactory {
 	public String createJsonString() throws Exception {
 		System.out.println("Nota de Debito: start generating JSON object from Document");
 		ObjectMapper objectMapper      = new ObjectMapper();
-		String notaDeCreditoAsString   = objectMapper.writeValueAsString(notaDeCredito);
+		String notaDeCreditoAsString   = objectMapper.writeValueAsString(notaDeDebito);
 		JSONObject notaDeCreditoAsJson = new JSONObject(notaDeCreditoAsString);
 
 		notaDeCreditoAsJson.remove(NotaDeDebito.ERRORMESSAGES);
@@ -546,6 +554,6 @@ public class NotaDeDebitoFactory extends EDocumentFactory {
 
 	@Override
 	public StringBuffer getEDocumentErrorMessages() {
-		 return notaDeCredito.errorMessages;
+		 return notaDeDebito.errorMessages;
 	 }
 }

@@ -73,7 +73,7 @@ public class EInvoiceGenerateAndPost extends EInvoiceGenerateAndPostAbstract imp
 				+ "AND s.ApplicationType = ?"
 				+ "AND s.IsActive = 'Y'"
 				+ "AND s.Classname = ?)", get_TrxName())
-				.setParameters(applicationType, Findex.class.getName())
+				.setParameters(applicationType, SVMinHacienda.class.getName())
 				.<MADAppRegistration>first();
 
 		if(registration==null) {
@@ -82,12 +82,16 @@ public class EInvoiceGenerateAndPost extends EInvoiceGenerateAndPostAbstract imp
 			System.out.println(errorMessage);
 			return errorMessage.toString();
 		}
+		SVMinHacienda sv_minhacienda = new SVMinHacienda();
+		sv_minhacienda.setVoided(true);
+		sv_minhacienda.setADClientID(client.getAD_Client_ID());
+		sv_minhacienda.setAppRegistrationId(registration.getAD_AppRegistration_ID() );
+		
 
-		Findex findex = new Findex();
-		findex.setVoided(true);
-		findex.setAppRegistrationId(registration.getAD_AppRegistration_ID() );
-
-		String whereClause = IGenerateAndPost.getWhereclause(true);
+		String whereClause = IGenerateAndPost.getWhereclause(true); 
+		if (getInvoiceId()>0)
+			whereClause = whereClause + " AND C_Invoice_ID=" + getInvoiceId();
+			
 	
 		try {
 			int[] invoiceIds = new Query(Env.getCtx(), MInvoice.Table_Name, whereClause, null)
@@ -99,114 +103,6 @@ public class EInvoiceGenerateAndPost extends EInvoiceGenerateAndPostAbstract imp
 				System.out.println("****************** Process EInvoiceGenerateAndPost: There is no invoice to process!!!");
 				System.out.println("Process EInvoiceGenerateAndPost: finished" + "\n");
 				return " No hay Documentos anulados pendientes";
-			}
-
-			System.out.println("Collecting invoices to be processed..."); 
-			Trx updateTransaction = Trx.get("UpdateDB_ei_Processing", true);  
-			StringBuffer sqlUpdate = new StringBuffer("UPDATE C_Invoice set ei_Processing = 'Y' WHERE c_INvoice_ID in (");
-			String character = ",";
-			for ( int i = 0; i < length; i++) {
-				character = i<length-1? ",": ")";
-				int invoiceID = invoiceIds[i];
-				sqlUpdate.append(invoiceID + character);
-				System.out.println("InvoiceID to be processed: " + invoiceID); 
-			}
-			System.out.println("Set 'processing' flag so invoices cannot be processed by other processes..."+ "\n"); 
-			DB.executeUpdateEx(sqlUpdate.toString(), updateTransaction.getTrxName());
-			if (updateTransaction != null) {
-				updateTransaction.commit(true);
-				updateTransaction.close();
-			}
-			
-			AtomicInteger counter = new AtomicInteger(0);
-
-			Arrays.stream(invoiceIds)
-			.filter(invoiceId -> invoiceId > 0)
-				.forEach(invoiceId -> {
-					 Trx dbTransaction = null;
-					try {
-						counter.getAndIncrement();
-						System.out.println("Start invoice No. " + counter + " of " + length); 
-						Integer id = (Integer)invoiceId;
-	                    dbTransaction = Trx.get(id.toString(), true);   
-						MInvoice invoice = new MInvoice(Env.getCtx(), invoiceId, dbTransaction.getTrxName());
-						findex.publishDocument(invoice);
-						invoice.set_ValueOfColumn("ei_Processing", false);
-						invoice.saveEx();
-	                    if (dbTransaction != null) {
-	                        dbTransaction.commit(true);
-	                        dbTransaction.close();
-	                    }
-	                    System.out.println("End invoice No. " + counter + " of " + length+ "\n"+ "\n");
-					} catch (Exception e) {
-						String error = "Error al procesar documento #" + invoiceId + " " + e;
-						System.out.println(error);
-					}
-					finally {
-						if (dbTransaction != null) {							
-	                        dbTransaction.close();
-	                    }
-					}
-					System.out.println("Publish document successful"); 
-				});
-		}
-		catch (Exception e) {
-			System.out.println("Process EInvoiceGenerateAndPost: error " + e);
-		}
-		System.out.println("Process EInvoiceGenerateAndPost: finished");
-		System.out.println("******************************************************" + "\n");		
-		return " Documentos anulados: " + noCompletados;
-	
-		
-	}
-	
-
-	
-	protected String processInvoices() throws Exception{
-
-
-		StringBuffer errorMessages = new StringBuffer();
-		int noCompletados = 0;
-		String applicationType = IGenerateAndPost.getApplicationType();
-		MADAppRegistration registration = null;
-		Timestamp startdate = null;
-		String errorMessage= "";
-		MClient client = new MClient(getCtx(),getClientId(), get_TrxName());
-
-		startdate = (Timestamp)(client.get_Value("ei_Startdate"));
-		System.out.println("\n" + "******************************************************");
-		System.out.println("Process EInvoiceGenerateAndPost: started with Client '" + client.getName() + "', ID: " + getClientId());
-		registration = new Query(getCtx(), MADAppRegistration.Table_Name, "EXISTS(SELECT 1 FROM AD_AppSupport s "
-				+ "WHERE s.AD_AppSupport_ID = AD_AppRegistration.AD_AppSupport_ID "
-				+ "AND s.ApplicationType = ?"
-				+ "AND s.IsActive = 'Y'"
-				+ "AND s.Classname = ?)", get_TrxName())
-				.setParameters(applicationType, SVMinHacienda.class.getName())
-				.<MADAppRegistration>first();
-
-		if(registration==null) {
-			errorMessage = "Process EInvoiceGenerateAndPost : no registration for Application Type " + applicationType;
-			errorMessages.append(errorMessage);
-			System.out.println(errorMessage);
-			return errorMessage.toString();
-		}
-
-		SVMinHacienda sv_minhacienda = new SVMinHacienda();
-		sv_minhacienda.setVoided(false);
-		sv_minhacienda.setAppRegistrationId(registration.getAD_AppRegistration_ID() );
-
-		String whereClause = IGenerateAndPost.getWhereclause(false);
-	
-		try {
-			int[] invoiceIds = new Query(Env.getCtx(), MInvoice.Table_Name, whereClause, null)
-						.setParameters(getClientId(), startdate)
-						.getIDs();
-			final int length = invoiceIds.length;
-			noCompletados = length;
-			if(length==0) {
-				System.out.println("****************** Process EInvoiceGenerateAndPost: There is no invoice to process!!!");
-				System.out.println("Process EInvoiceGenerateAndPost: finished" + "\n");
-				return "No hay documentos completados pendientes ";
 			}
 
 			System.out.println("Collecting invoices to be processed..."); 
@@ -263,10 +159,130 @@ public class EInvoiceGenerateAndPost extends EInvoiceGenerateAndPostAbstract imp
 		}
 		System.out.println("Process EInvoiceGenerateAndPost: finished");
 		System.out.println("******************************************************" + "\n");		
+		return " Documentos anulados: " + noCompletados;
+	
+		
+	}
+	
+
+	
+	protected String processInvoices() throws Exception{
+
+
+		StringBuffer errorMessages = new StringBuffer();
+		int noCompletados = 0;
+		String applicationType = IGenerateAndPost.getApplicationType();
+		MADAppRegistration registration = null;
+		Timestamp startdate = null;
+		String errorMessage= "";
+		MClient client = new MClient(getCtx(),getClientId(), get_TrxName());
+
+		startdate = (Timestamp)(client.get_Value("ei_Startdate"));
+		System.out.println("\n" + "******************************************************");
+		System.out.println("Process EInvoiceGenerateAndPost: started with Client '" + client.getName() + "', ID: " + getClientId());
+		registration = new Query(getCtx(), MADAppRegistration.Table_Name, " AD_Client_ID=? AND EXISTS(SELECT 1 FROM AD_AppSupport s "
+				+ "WHERE s.AD_AppSupport_ID = AD_AppRegistration.AD_AppSupport_ID "
+				+ "AND s.ApplicationType = ? "
+				+ "AND s.IsActive = 'Y' "
+				+ "AND s.Classname = ? )"
+				+ "AND AD_Client_ID=?", get_TrxName())
+				.setParameters(getClientId(),  applicationType, SVMinHacienda.class.getName(), getClientId())
+				.<MADAppRegistration>first();
+
+		if(registration==null) {
+			errorMessage = "Process EInvoiceGenerateAndPost : no registration for Application Type " + applicationType;
+			errorMessages.append(errorMessage);
+			System.out.println(errorMessage);
+			return errorMessage.toString();
+		}
+
+		SVMinHacienda sv_minhacienda = new SVMinHacienda();
+		sv_minhacienda.setVoided(false);
+		sv_minhacienda.setADClientID(client.getAD_Client_ID());
+		sv_minhacienda.setAppRegistrationId(registration.getAD_AppRegistration_ID() );
+		
+
+		String whereClause = IGenerateAndPost.getWhereclause(false);
+		if (getInvoiceId()>0)
+				whereClause = whereClause + " AND C_Invoice_ID=" + getInvoiceId();
+				
+	
+		try {
+			int[] invoiceIds = new Query(Env.getCtx(), MInvoice.Table_Name, whereClause, null)
+						.setParameters(getClientId(), startdate)
+						.getIDs();
+			final int length = invoiceIds.length;
+			noCompletados = length;
+			if(length==0) {
+				System.out.println("****************** Process EInvoiceGenerateAndPost: There is no invoice to process!!!");
+				System.out.println("Process EInvoiceGenerateAndPost: finished" + "\n");
+				return "No hay documentos completados pendientes ";
+			}
+
+			System.out.println("Collecting invoices to be processed..."); 
+			Trx updateTransaction = Trx.get("UpdateDB_ei_Processing", true);  
+			StringBuffer sqlUpdate = new StringBuffer("UPDATE C_Invoice set ei_Processing = 'Y' WHERE c_INvoice_ID in (");
+			String character = ",";
+			for ( int i = 0; i < length; i++) {
+				character = i<length-1? ",": ")";
+				int invoiceID = invoiceIds[i];
+				sqlUpdate.append(invoiceID + character);
+				System.out.println("InvoiceID to be processed: " + invoiceID); 
+			}
+			System.out.println("Set 'processing' flag so invoices cannot be processed by other processes..."+ "\n"); 
+			DB.executeUpdateEx(sqlUpdate.toString(), updateTransaction.getTrxName());
+			if (updateTransaction != null) {
+				updateTransaction.commit(true);
+				updateTransaction.close();
+			}
+			
+			AtomicInteger counter = new AtomicInteger(0);
+
+			Arrays.stream(invoiceIds)
+			.filter(invoiceId -> invoiceId > 0)
+				.forEach(invoiceId -> {
+					 Trx dbTransaction = null;
+					try {
+						counter.getAndIncrement();
+						System.out.println("Start invoice No. " + counter + " of " + length); 
+						Integer id = (Integer)invoiceId;
+	                    dbTransaction = Trx.get(id.toString(), true);   
+						MInvoice invoice = new MInvoice(Env.getCtx(), invoiceId, dbTransaction.getTrxName());
+						sv_minhacienda.publishDocument(invoice);
+						invoice.set_ValueOfColumn("ei_Processing", false);
+						invoice.saveEx();
+	                    if (dbTransaction != null) {
+	                        dbTransaction.commit(true);
+	                        dbTransaction.close();
+	                    }
+	                    if (invoice.get_ValueAsString("ei_selloRecibido") != null)
+	                    	//sendIndividualMail(null, invoice);
+	                    System.out.println("End invoice No. " + counter + " of " + length+ "\n"+ "\n");
+					} catch (Exception e) {
+						String error = "Error al procesar documento #" + invoiceId + " " + e;
+						System.out.println(error);
+					}
+					finally {
+						if (dbTransaction != null) {							
+	                        dbTransaction.close();
+	                    }
+					}
+					System.out.println("Publish document successful"); 
+				});
+		}
+		catch (Exception e) {
+			System.out.println("Process EInvoiceGenerateAndPost: error " + e);
+		}
+		System.out.println("Process EInvoiceGenerateAndPost: finished");
+		System.out.println("******************************************************" + "\n");		
 		return "Documentos completados: " + noCompletados ;
 	
 		
 	}
+	
+	
+	 
+	
 	
 	
 

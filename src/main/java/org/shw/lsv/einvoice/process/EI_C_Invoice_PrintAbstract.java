@@ -20,50 +20,50 @@ package org.shw.lsv.einvoice.process;
 
 import org.compiere.process.SvrProcess;
 
-/** Generated Process for (EInvoiceGenerateAndPost)
+/** Generated Process for (EI_C_Invoice_Print)
  *  @author ADempiere (generated) 
  *  @version Release 3.9.4
  */
-public abstract class EInvoiceGenerateAndPostAbstract extends SvrProcess {
+public abstract class EI_C_Invoice_PrintAbstract extends SvrProcess {
 	/** Process Value 	*/
-	private static final String VALUE_FOR_PROCESS = "EInvoiceGenerateAndPost";
+	private static final String VALUE_FOR_PROCESS = "EI_C_Invoice_Print";
 	/** Process Name 	*/
-	private static final String NAME_FOR_PROCESS = "EInvoiceGenerateAndPost";
+	private static final String NAME_FOR_PROCESS = "EI_C_Invoice_Print";
 	/** Process Id 	*/
-	private static final int ID_FOR_PROCESS = 54638;
-	/**	Parameter Name for Client	*/
-	public static final String AD_CLIENT_ID = "AD_Client_ID";
-	/**	Parameter Name for Invoice	*/
-	public static final String C_INVOICE_ID = "C_Invoice_ID";
-	/**	Parameter Value for Client	*/
-	private int clientId;
-	/**	Parameter Value for Invoice	*/
-	private int invoiceId;
+	private static final int ID_FOR_PROCESS = 1000084;
+	/**	Parameter Name for Mail Template	*/
+	public static final String R_MAILTEXT_ID = "R_MailText_ID";
+	/**	Parameter Name for Record ID	*/
+	public static final String RECORD_ID = "Record_ID";
+	/**	Parameter Value for Mail Template	*/
+	private int mailTextId;
+	/**	Parameter Value for Record ID	*/
+	private int recordId;
 
 	@Override
 	protected void prepare() {
-		clientId = getParameterAsInt(AD_CLIENT_ID);
-		invoiceId = getParameterAsInt(C_INVOICE_ID);
+		mailTextId = getParameterAsInt(R_MAILTEXT_ID);
+		recordId = getParameterAsInt(RECORD_ID);
 	}
 
-	/**	 Getter Parameter Value for Client	*/
-	protected int getClientId() {
-		return clientId;
+	/**	 Getter Parameter Value for Mail Template	*/
+	protected int getMailTextId() {
+		return mailTextId;
 	}
 
-	/**	 Setter Parameter Value for Client	*/
-	protected void setClientId(int clientId) {
-		this.clientId = clientId;
+	/**	 Setter Parameter Value for Mail Template	*/
+	protected void setMailTextId(int mailTextId) {
+		this.mailTextId = mailTextId;
 	}
 
-	/**	 Getter Parameter Value for Invoice	*/
-	protected int getInvoiceId() {
-		return invoiceId;
+	/**	 Getter Parameter Value for Record ID	*/
+	protected int getRecordId() {
+		return recordId;
 	}
 
-	/**	 Setter Parameter Value for Invoice	*/
-	protected void setInvoiceId(int invoiceId) {
-		this.invoiceId = invoiceId;
+	/**	 Setter Parameter Value for Record ID	*/
+	protected void setRecordId(int recordId) {
+		this.recordId = recordId;
 	}
 
 	/**	 Getter Parameter Value for Process ID	*/

@@ -53,7 +53,7 @@ public class ExtensionNotaDeDebito {
 		if( (length>=MINLENGTH && length<=MAXLENGTH) || (nombEntrega==null) )
 			this.nombEntrega = nombEntrega;
 		else
-	        throw new IllegalArgumentException("Wrong parameter 'nombEntrega' in NotaDeDebito.Extension.setNombEntrega()" + "\n");
+	        throw new IllegalArgumentException("Wrong parameter 'nombEntrega' in NotaDeCredito.Extension.setNombEntrega()" + "\n");
 	}
 
 	/**
@@ -78,7 +78,7 @@ public class ExtensionNotaDeDebito {
 		if( (length>=MINLENGTH && length<=MAXLENGTH) || (docuEntrega==null) )
 			this.docuEntrega = docuEntrega;
 		else
-	        throw new IllegalArgumentException("Wrong parameter 'docuEntrega' in NotaDeDebito.Extension.setDocuEntrega()" + "\n");
+	        throw new IllegalArgumentException("Wrong parameter 'docuEntrega' in NotaDeCredito.Extension.setDocuEntrega()" + "\n");
 	}
 
 	/**
@@ -103,7 +103,7 @@ public class ExtensionNotaDeDebito {
 		if( (length>=MINLENGTH && length<=MAXLENGTH) || (nombRecibe==null) )
 			this.nombRecibe = nombRecibe;
 		else
-	        throw new IllegalArgumentException("Wrong parameter 'nombRecibe' in NotaDeDebito.Extension.setNombRecibe()" + "\n");
+	        throw new IllegalArgumentException("Wrong parameter 'nombRecibe' in NotaDeCredito.Extension.setNombRecibe()" + "\n");
 	}
 
 	/**
@@ -128,7 +128,7 @@ public class ExtensionNotaDeDebito {
 		if( (length>=MINLENGTH && length<=MAXLENGTH) || (docuRecibe==null) )
 			this.docuRecibe = docuRecibe;
 		else
-	        throw new IllegalArgumentException("Wrong parameter 'docuRecibe' in NotaDeDebito.Extension.setDocuRecibe()" + "\n");
+	        throw new IllegalArgumentException("Wrong parameter 'docuRecibe' in NotaDeCredito.Extension.setDocuRecibe()" + "\n");
 	}
 
 	/**
@@ -152,32 +152,8 @@ public class ExtensionNotaDeDebito {
 		if( (length<=MAXLENGTH) || (observaciones==null) )
 			this.observaciones = observaciones;
 		else
-	        throw new IllegalArgumentException("Wrong parameter 'observaciones' in NotaDeDebito.Extension.setObservaciones()" + "\n");
+	        throw new IllegalArgumentException("Wrong parameter 'observaciones' in NotaDeCredito.Extension.setObservaciones()" + "\n");
 	}
-
-    
-	// HERE, GETTERS AND SETTERS ONLY TO COMPLY WITH INTERFACE.
-	// THEY ARE ACTUALLY NOT ALLOWED AND MUST THROW AN EXCEPTION
-
-
-
-	/**
-	 * DO NO USE THIS METHOD!! IT WILL YIELD A RUNTIME EXCEPTION!!!!!
-	 */
-
-	public String getPlacaVehiculo() {
-		throw new UnsupportedOperationException("In Document Nota de Debito calling the method Extension.getPlacaVehiculo() is not allowed");
-	}
-
-	/**
-	 * DO NO USE THIS METHOD!! IT WILL YIELD A RUNTIME EXCEPTION!!!!!
-	 */
-
-	public void setPlacaVehiculo(String placaVehiculo) {
-		throw new UnsupportedOperationException("In Document Nota de Debito calling the method Extension.setPlacaVehiculo() is not allowed");
-	}
-
-
 
 	/**
 	 * @param args
@@ -186,5 +162,4 @@ public class ExtensionNotaDeDebito {
 		// TODO Auto-generated method stub
 
 	}
-
 }

@@ -30,6 +30,8 @@ public interface IDeclarationProvider extends IAppSupport {
 	 */
 	public String publishDocument(PO document) throws Exception;
 	
+	
+	
 	/**
 	 * Get declaration document based on entity
 	 * @param entity

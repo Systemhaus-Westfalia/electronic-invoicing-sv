@@ -44,12 +44,12 @@ public class EInvoiceGetToken extends EInvoiceGetTokenAbstract
 		String applicationType = IGenerateAndPost.getApplicationType();
 		MADAppRegistration registration = null;
 		String errorMessage= "";
-		registration = new Query(getCtx(), MADAppRegistration.Table_Name, "EXISTS(SELECT 1 FROM AD_AppSupport s "
+		registration = new Query(getCtx(), MADAppRegistration.Table_Name, " AD_Client_ID=? AND EXISTS(SELECT 1 FROM AD_AppSupport s "
 				+ "WHERE s.AD_AppSupport_ID = AD_AppRegistration.AD_AppSupport_ID "
 				+ "AND s.ApplicationType = ?"
 				+ "AND s.IsActive = 'Y'"
 				+ "AND s.Classname = ?)", get_TrxName())
-				.setParameters(applicationType, SVMinHaciendaToken.class.getName())
+				.setParameters(getClientId(),  applicationType, SVMinHaciendaToken.class.getName())
 				.<MADAppRegistration>first();
 
 		if(registration==null) {
@@ -60,9 +60,9 @@ public class EInvoiceGetToken extends EInvoiceGetTokenAbstract
 		}
 
 		SVMinHaciendaToken sv_minhaciendaToken = new SVMinHaciendaToken();
-		sv_minhaciendaToken.setAppRegistrationId(registration.getAD_AppRegistration_ID() );
 		MClient client = new MClient(getCtx(), getClientId(), get_TrxName());
 		sv_minhaciendaToken.setAD_Client(client);
+		sv_minhaciendaToken.setAppRegistrationId(registration.getAD_AppRegistration_ID() );
 		
 		try {
 			sv_minhaciendaToken.publishDocument(null);

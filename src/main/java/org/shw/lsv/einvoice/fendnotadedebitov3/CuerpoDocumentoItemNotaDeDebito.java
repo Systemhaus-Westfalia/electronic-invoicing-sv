@@ -16,7 +16,7 @@ import org.shw.lsv.einvoice.utils.EDocumentUtils;
 public class CuerpoDocumentoItemNotaDeDebito {
 	static final String VALIDATION_VENTAGRAVADA_IS_NULL     = "Documento: Nota de Debito, clase: CuerpoDocumentoItem. Validacion fallo: valor de 'ventaGravada' no debe ser ='null'";
 	static final String VALIDATION_TRIBUTOS_NOT_NULL        = "Documento: Nota de Debito, clase: CuerpoDocumentoItem. Validacion fallo: valor de 'tributos' debe ser ='null'";
-	static final String VALIDATION_TRIBUTOS_EMPTY           = "Documento: Nota de Debito, clase: CuerpoDocumentoItem. Validacion fallo: valor de 'tributos' no debe ser vacoo";
+	static final String VALIDATION_TRIBUTOS_EMPTY           = "Documento: Nota de Debito, clase: CuerpoDocumentoItem. Validacion fallo: valor de 'tributos' no debe ser vacio";
 	static final String VALIDATION_UDM_NOT_99               = "Documento: Nota de Debito, clase: CuerpoDocumentoItem. Validacion fallo: valor de 'uniMedida' debe ser =99";
 	static final String VALIDATION_TRIBUTOS_IS_NULL         = "Documento: Nota de Debito, clase: CuerpoDocumentoItem. Validacion fallo: valor de 'tributos' no debe ser ='null'";
 	static final String VALIDATION_TRIBUTOS_NOT_20          = "Documento: Nota de Debito, clase: CuerpoDocumentoItem. Validacion fallo: valor de 'tributos' debe ser ='20'";
@@ -43,6 +43,7 @@ public class CuerpoDocumentoItemNotaDeDebito {
 	 * Constructor without parameters. 
 	 */
 	public CuerpoDocumentoItemNotaDeDebito() {
+		tributos = new ArrayList<String>();
 		
 	}
 
@@ -85,15 +86,18 @@ public class CuerpoDocumentoItemNotaDeDebito {
 	 * Validate the Schema conditions
 	 */
 	public String validateValues() {
+		
 		if(getVentaGravada()==null) {
 			return VALIDATION_VENTAGRAVADA_IS_NULL;
 		}
 
+		Boolean existsTributo = getTributos() != null && !getTributos().isEmpty();
+		
 		if(getVentaGravada().compareTo(BigDecimal.ZERO)==0) {
-			if (getTributos()!=null)
+			if (existsTributo)
 				return VALIDATION_TRIBUTOS_NOT_NULL;
 		} else {
-			if ( (getTributos()==null) || (getTributos().isEmpty()) )
+			if ( !existsTributo  )
 				return VALIDATION_TRIBUTOS_EMPTY;
 		}
 		
@@ -110,7 +114,8 @@ public class CuerpoDocumentoItemNotaDeDebito {
 			
 			ArrayList<String> expectedValues=  new ArrayList<>(List.of( "20", "C3", "59", "71", "D1", "C8", "D5", "D4"));
 			// Here, is only ONE item expected; where there are MANY items expected, the query must be changed.
-			if ( (getTributos()!=null) && ( (getTributos().isEmpty()) || (expectedValues.indexOf(getTributos().get(0))==-1)) )
+
+			if ( (existsTributo && (expectedValues.indexOf(getTributos().get(0))==-1)) )
 				return VALIDATION_TRIBUTOS_PATTERN_FAILED;			
 		}
 		
